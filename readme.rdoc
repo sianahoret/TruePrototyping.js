@@ -1,5 +1,4 @@
-TruePrototyping.js
-==================
+== TruePrototyping.js
 
 The javascript library which provides API for using True Prototypal Inheritance.
 
@@ -7,17 +6,17 @@ The javascript library which provides API for using True Prototypal Inheritance.
 
 === Slogan
 
-Stop thinking with "classes" and "instances"! Think with true prototypal chain!
+Stop thinking with "classes" and "instances"! Think with true prototype chain, just a chain of delegation!
 
 === Traditional inheritance model is weird
 
 Javascript is a propotype-based language. From the statement it could be expected javascript uses paradigm of Prototypal Inheritance. Unfortunately it is so and at the same time not quite so.
 
-Sure javascript uses prototypes for inheritance. But traditional inheritance model in javascript mimics classical OOP instead of to be true Prototypal Inheritance (http://en.wikipedia.org/wiki/Prototype-based_programming). Using functions as object constructors with "new" operator and excurrent implementation of "prototype" and "constructor" properties, "typeof" and "instanceof" operators makes a program more complex and confusing than it can be.
+Sure javascript uses prototypes for inheritance. But traditional inheritance model in javascript mimics classical OOP instead of to be {True Prototypal Inheritance}[http://en.wikipedia.org/wiki/Prototype-based_programming]. Using functions as object constructors with "new" operator and excurrent implementation of "prototype" and "constructor" properties, "typeof" and "instanceof" operators makes a program more complex and confusing than it can be.
 
 A couple of links:
-* Denunciation of the "traditional" style by Douglas Crockford: http://javascript.crockford.com/prototypal.html
-* Confusion with "constructor" property: http://joost.zeekat.nl/constructors-considered-mildly-confusing.html
+* {Denunciation of the "traditional" style by Douglas Crockford}[http://javascript.crockford.com/prototypal.html]
+* {Confusion with "constructor" property}[http://joost.zeekat.nl/constructors-considered-mildly-confusing.html]
 
 
 === Ways of using true prototypal inheritance style
@@ -25,8 +24,8 @@ A couple of links:
 True prototypal inheritance style in javascript is possible for long time with using non-standard "__proto__" property. Since ECMAScript 5th Edition (JavaScript 1.8.5) there is a standard way for true prototypal inheritance style - Object.create and a few related methods.
 
 So the idea is not new. A couple of links:
-* Demonstration of the true style by Tim Caswell, a Node.js developer: http://howtonode.org/prototypical-inheritance
-* My article (in Russian): http://innerbytes.net/proto/javascript/clear_prototipal_inheritance.htm
+* {Demonstration of the true style by Tim Caswell, a Node.js developer}[http://howtonode.org/prototypical-inheritance]
+* {My article (in Russian)}[http://innerbytes.net/proto/javascript/clear_prototipal_inheritance.htm]
 
 
 === What I propose here
@@ -52,7 +51,7 @@ I try to achieve two aims:
     ... // any other properties
   });
 
-Behind the scene, as well as on the scene, there is a +chain of delegation containing only the objects you've defined+ and nothing more:
+Behind the scene, as well as on the scene, there is a <b>chain of delegation containing only the objects you've defined</b> and nothing more:
   Employee.ancestor == Person // Employee.__proto__ == Person
   john.ancestor == Employee   // john.__proto__ == Employee
 
