@@ -108,7 +108,7 @@ myInstance object won't act as expected for an instance of Backbone.Model, becau
 
 Frameworks which provides APIs for constructing object hierarchy (most of them simulate classical inheritance) in different ways provides the feature of referencing to ancestor object (up through the hierarchy), well known as "super"-call. Sometimes the feature is provided explicitly, sometimes it is there, but is not documented (and looks like inner __super__ method), sometimes it is just absent.
 
-TruePrototyping library provides a few properties and methods, which allow to walk through true prototype chain in the same way for different frameworks. In the mix_with_frameworks directory there are examples of using the mentioned way for object hierarchies created with Propotype, Mootools, Backbone and TruePrototyping - you can clone the repository, open mix_with_frameworks/all.html file in browser and try that.
+TruePrototyping library provides a few properties and methods, which allow to walk through true prototype chain: 'ancestor' and 'ancestors' properties, 'super', 'isAncestorOf' and 'isDescendantOf'. Moreover, they allow to do that in the same way for object hierarchies created by different frameworks. In the mix_with_frameworks directory there are examples of using the mentioned way for object hierarchies created with Propotype, Mootools, Backbone and TruePrototyping - you can clone the repository, open mix_with_frameworks/all.html file in browser and try that.
 
 === TODO
 

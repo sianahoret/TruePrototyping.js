@@ -25,7 +25,8 @@
       id: "ID",
 
       url: function(){
-        return this.ancestor.super('url') + '/somethingExtra';
+        return MyModel.prototype.super('url') + '/somethingExtra';
+        // return this.ancestor.super('url') + '/somethingExtra';         // this approach is also possible
       }
     });
 

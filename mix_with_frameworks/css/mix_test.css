@@ -21,7 +21,6 @@ pre {
   font-size: 13px;
   line-height: 18px;
   border: 1px solid #ddd;
-  border-left: 26px solid #ddd;
   background-color: #f2f8f2;
   font-family: Monaco, Consolas, "Lucida Console", monospace;
   font-style: normal;
@@ -33,5 +32,5 @@ pre {
 iframe {
   width: 100%;
   border: none;
-  height: 500px;
+  height: 550px;
 }
