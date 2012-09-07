@@ -6,7 +6,7 @@ The javascript library which provides API for using True Prototypal Inheritance.
 
 === Slogan
 
-Stop thinking with "classes" and "instances"! Think with true prototype chain, just a chain of delegation!
+Stop thinking with "classes" and "instances" - think with true prototype chain, just a chain of delegation!
 
 === Traditional inheritance model is weird
 
@@ -30,58 +30,102 @@ So the idea is not new. A couple of links:
 
 === What I propose here
 
-Actually I am annoyed by most of popular javascript libraries and frameworks not just use the "traditional" style, but even enhance imitation of Classical OOP with class-like APIs, while seems there is no library which follows the true prototypal inheritance style. I guess why it is so (see Problems section below), but I assume the "true style" deserves to be more used than it is at nowadays.
+Actually I am upset by most of popular javascript libraries and frameworks not just use the "traditional" style, but even enhance imitation of Classical OOP with class-like APIs, while seems there is no library which follows the true prototypal inheritance style. I guess why it is so (see Problems section below), but I assume the "true style" deserves to be more used than it is at nowadays.
 
 I try to achieve two aims:
 1. To make "true" style programming as it possible compact and pleasing. I have mentioned ES5 standard intends a support of what I name the "true" style. As for me, the standard way is too verbose. So I propose some syntactical sugar.
 2. To make "true" style programming possible in new (ES5-compliant) browsers as well as in old (not ES5-compliant) browsers with the same syntax.
 
-=== Example of use
+=== Using
+
+After you include the TruePrototyping.js into your program, you can construct inheritance chain in the following way:
 
   Person = {
-    ... // any properties
+    ... // some properties
   };
 
   Employee = Person.derive({
-    ... // any properties
+    ... // some Employee specific properties
   });
 
   var john = Employee.derive({
     name: "John",
-    ... // any other properties
+    ... // some john specific properties
   });
 
-Behind the scene, as well as on the scene, there is a <b>chain of delegation containing only the objects you've defined</b> and nothing more:
+<b>Behind the scene, as well as on the scene, there is a chain of delegation containing only the objects you've defined</b> and nothing more:
   Employee.ancestor == Person // Employee.__proto__ == Person
   john.ancestor == Employee   // john.__proto__ == Employee
 
-There is no mystical "prototype", which exists regardless you haven't defined it and replacement of which can break object relationship at all.
+There is no mystical "prototype", which exists regardless you haven't defined it and {replacement of which can break object relationship at all}[http://joost.zeekat.nl/constructors-considered-mildly-confusing.html].
 
+And what? What are the benefits excepting "background cleanness"?
 
-=== Problems with the "true" prototypal inheritance style
+Well, the simplest benefit is following. Suppose having any object in program, you want to make almost similar object, but slightly different. With the proposed approach you can derive new object from the existing, not worrying about nature of the existing object (existing object can be Function or not, can have proper "prototype" or "constructor" property or do not have one):
 
-As for me the proposed approach is great, if you use it in some program system from the scratch. But it can be confusing, if you try to use some "traditionally" designed libraries with the new approach. At least in this case you cannot abstract from the old way and think with the new way only. Furthermore using "old library" with the new way can break correct working of the library at all.
+  someExistingObject.method1(); // suppose returns "method1"
 
-Example:
+  myObject = someExistingObject.derive({   // type of someExistingObject does not matter
+    method2: function(){
+      return "method2";
+    };
+  });
 
-Suppose some library has Person "class" and the official way of using the class is following:
+  myObject.method1(); // returns "method1"
+  myObject.method2(); // returns "method2"
 
-  var john = new Person("John");
+=== Caution
 
-The official way of deriving from the "class" is following:
+Unfortunately there is a problem with the proposed "true" prototypal inheritance style.
 
-  Employee = Person.extend();
-  var john = new Employee("John");
+I treat the approach as straightforward and clear, if you use it in some program system from the scratch.
 
-Perhaps the library provides some API around the Person "class" and the API and the API implementation likely relies on john.__proto__ should point to Employee.prototype.
+However the approach can be confusing, if you try to mix it with the "traditional" way. At least you cannot completely abstract from the old way and think with the new way only, you should be careful with such mix.
 
-If you use the proposed new way to make Employee (what is more clear as for me):
+For example, traditionally you use Backbone.Model in this way:
 
-  Employee = Person.derive();
-  var john = Employee.derive("John");
+  var MyModel = Backbone.Model.extend({});
+  var myInstance = new MyModel(); // myInstance is traditional "instanceof" MyModel
 
-john.__proto__ will point to Employee itself instead of Employee.prototype and the library will likely break because that.
+If you try to do this:
 
+  var MyModel = Backbone.Model.extend({});
+  var myInstance = MyModel.derive();  // myInstance.__proto__ points to MyModel itself instead of MyModel.prototype
+
+myInstance object won't act as expected for an instance of Backbone.Model, because myInstance is not traditional "instanceof" MyModel (and is not "instanceof" Backbone.Model), what the Backbone framework relies on.
+
+=== A little alibi :)
+
+Even if due to caution have been mentioned above you do not use 'derive', but use the "traditional" inheritance way, the 'ancestor', 'ancestors', 'super', 'isAncestorOf', 'isDescendantOf' properties and methods still can be useful for inspecting and walking through true prototype chain.
+
+For example, you have your custom Backbone Model (MyModel) and you want to override 'url' method for MyModel "class" with using base implementation of the method. How to get the base implementation? The {commonly used way}[http://backbonejs.org/#Model-extend] is following:
+
+  var MyModel = Backbone.Model.extend({
+    url: function(){
+      return Backbone.Model.prototype.url.call(this) + somethingYouWant;
+    }
+  });
+  var myInstance = new MyModel();
+
+That is, you have to use explicit "Backbone.Model.prototype" notation to access the object which keeps base implementation of Backbone.Model instance properties.
+What to do, if you do not like to explicitly refer to Backbone.Model, but you prefer to refer to an ancestor without use of its constructor name? You can do that with using 'ancestor' and 'super' from the TruePrototyping library:
+
+  var MyModel = Backbone.Model.extend({
+    url: function(){
+      return this.ancestor.super('url') + somethingYouWant;
+    }
+  });
+  var myInstance = new MyModel();
+
+What you only should remember is that this.ancestor === MyModel.prototype. Well, if 'this.ancestor' construction in this sense looks confusing, you can keep this.ancestor value in some other property to make the code more clear for you.
+
+  var MyModel = Backbone.Model.extend({
+    classImplementation: function() { return this.ancestor }; // "traditional" keeper of MyModel instance properties
+    url: function(){
+      return this.classImplementation().super('url') + somethingYouWant;
+    }
+  });
+  var myInstance = new MyModel();
 
 === TODO
 
