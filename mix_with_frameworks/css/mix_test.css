@@ -1,0 +1,37 @@
+body {
+  padding: 0 10px;
+}
+
+div.button-wrapper {
+  position: relative;
+}
+
+div.run {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 26px;
+  height: 18px;
+  background: url('../images/arrows.png') no-repeat -26px 0;
+  cursor: pointer;
+}
+
+pre {
+  padding-top: 25px;
+  font-size: 13px;
+  line-height: 18px;
+  border: 1px solid #ddd;
+  border-left: 26px solid #ddd;
+  background-color: #f2f8f2;
+  font-family: Monaco, Consolas, "Lucida Console", monospace;
+  font-style: normal;
+  display: block;
+  white-space: pre;
+  margin: 1em 0;
+}
+
+iframe {
+  width: 100%;
+  border: none;
+  height: 500px;
+}
