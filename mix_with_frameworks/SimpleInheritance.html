@@ -9,21 +9,21 @@
   <script type="text/javascript" src="js/mix_test.js"></script>
   <script type="text/javascript" src="../TruePrototyping.js"></script>
 
-  <script type="text/javascript" src="js/prototype.1.7.1.js"></script>
+  <script type='text/javascript' src='js/simple_inheritance.js'></script>
 
   <link type="text/css" rel="stylesheet" href="css/mix_test.css"/>
 </head>
 <body>
 
-  <h2>With <a href="http://prototypejs.org/learn/class-inheritance" target="_blank">Prototype</a></h2>
+  <h2>With <a href="http://ejohn.org/blog/simple-javascript-inheritance/" target="_blank">John Resig's Simple JavaScript Inheritance</a> (the approach is used in <a href="http://v3.javascriptmvc.com/docs/jQuery.Class.html#&who=jQuery.Class" target="_blank">jQuery.Class of JavaScriptMVC</a>)</h2>
   <pre class="runnable">
-    var BaseModel = Class.create({
+    var BaseModel = Class.extend({
       url: function(){
         return '/users/ID';
       }
     });
 
-    var MyModel = Class.create(BaseModel, {
+    var MyModel = BaseModel.extend({
       url: function(){
         return MyModel.prototype.super('url') + '/somethingExtra';
         // return this.ancestor.super('url') + '/somethingExtra';       // this approach is also possible

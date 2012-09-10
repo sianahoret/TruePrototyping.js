@@ -8,13 +8,13 @@
   <script type="text/javascript" src="js/jquery.js"></script>
   <script type="text/javascript" src="js/mix_test.js"></script>
   <script type="text/javascript" src="../TruePrototyping.js"></script>
-  
+
   <link type="text/css" rel="stylesheet" href="css/mix_test.css"/>
 
 </head>
 <body>
 
-  <h2>TruePrototyping</h2>
+  <h2>With <a href="https://github.com/sianahoret/TruePrototyping.js" target="_blank">TruePrototyping</a> itself</h2>
   <pre class="runnable">
     var BaseModel = {                                                     // this object shoulkdn't be Function, as in examples above
         url: function(){
@@ -35,9 +35,6 @@
     alert(myInstance.ancestor.ancestor === BaseModel);                    // true
 
     alert(myInstance.url());                                              // "/users/ID/somethingExtra"
-    
-    var myInstanceLevel2 = myInstance.derive();
-    alert(myInstanceLevel2.url());                                        // again "/users/ID/somethingExtra",  any-level descendants of MyModel have the same 'url'
   </pre>
 
 </body>
