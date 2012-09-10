@@ -16,7 +16,7 @@ Javascript is a propotype-based language. From the statement it could be expecte
 Sure javascript uses prototypes for inheritance. But traditional inheritance model in javascript mimics classical OOP instead of to be {True Prototypal Inheritance}[http://en.wikipedia.org/wiki/Prototype-based_programming]. Using functions as object constructors with "new" operator and excurrent implementation of "prototype" and "constructor" properties, "typeof" and "instanceof" operators makes a program more complex and confusing than it can be.
 
 To better realize what I mean you can visit these links:
-* {Prototypal Inheritance in JavaScript"}[http://javascript.crockford.com/prototypal.html] by Douglas Crockford. Just a sentence from there: "JavaScript itself is conflicted about its prototypal nature".
+* {"Prototypal Inheritance in JavaScript" by Douglas Crockford}[http://javascript.crockford.com/prototypal.html]. Just a sentence from there: "JavaScript itself is conflicted about its prototypal nature".
 * {Confusion with "constructor" property}[http://joost.zeekat.nl/constructors-considered-mildly-confusing.html]
 
 
@@ -28,49 +28,48 @@ So the idea is not new. A couple of links:
 * {Demonstration of the true style by Tim Caswell, a Node.js developer}[http://howtonode.org/prototypical-inheritance]
 * {My article (in Russian)}[http://innerbytes.net/proto/javascript/clear_prototipal_inheritance.htm]
 
-
-=== What I propose here
-
 Actually I am upset by most of popular javascript libraries and frameworks not only use the "traditional" style, but even enhance imitation of Classical OOP with class-like APIs, while I do not know a library which follows the true prototypal inheritance style. I guess why it is so (see Problems section below), but I assume the "true style" deserves to be more used than it is at nowadays.
 
-I try to achieve two aims:
-1. To make "true" style programming as possible compact and pleasing. I have mentioned ES5 standard intends a support of what I name the "true" style. As for me, the standard way is too verbose. So I propose some syntactical sugar.
-2. To make lookup through true prototype chain easy and clear.
 
-=== Library overview
+=== Brief overview of TruePrototyping.js library
 
-There are two main features are provided by the library:
+The library tries to achieve the following aims:
+1. To make "true" prototypal programming in ES5-compliant environment as possible compact and pleasing. As it is mentioned above, ES5 standard intends a support of the style, but, as for me, the way is too verbose. 
+2. To provide ability to use the approach in non-ES5-compliant environment with the same syntax.
+3. To make lookup through true prototype chain easy and clear (regardless to a way the chain was created).
 
-'derive' method :: Compact way for construction of object hierarchy with clear prototypal inheritance
-'ancestor' and 'ancestors' properties, 'super', 'isAncestorOf' and 'isDescendantOf' methods :: Convenient way for introspection and lookup of true prototype chain, even if object hierarchy was created with "traditional" style.
+So the library provides the following groups of properties and methods:
+
+A compact syntax for construction of object hierarchy with intuitively clear object relationship :: 'derive' method
+A convenient and uniform way for introspection and lookup of true prototype chain, even if object hierarchy was created with "traditional" style :: 'ancestor' and 'ancestors' properties, 'super', 'isAncestorOf' and 'isDescendantOf' methods
 
 === Construction of object hierarchy with 'derive' method
 
 After you include the TruePrototyping.js into your program, any javascript object has 'derive' method and you can construct inheritance chain in the following way:
 
-  var Person = {
+  Person = {
     ... // some properties
   };
 
-  var Employee = Person.derive({
+  Employee = Person.derive({
     ... // some Employee specific properties
   });
 
-  var john = Employee.derive({
-    ... // some john specific properties
+  John = Employee.derive({
+    ... // some John specific properties
   });
 
 <b>Behind the scene, as well as on the scene, there is a chain of delegation containing only the objects you've defined</b> and nothing more:
   Employee.ancestor === Person // Employee.__proto__ === Person
   john.ancestor === Employee   // john.__proto__ === Employee
 
-There is no mystical "prototype", which exists regardless you haven't defined it and {replacement of which can break object relationship at all}[http://joost.zeekat.nl/constructors-considered-mildly-confusing.html].
+There is no mystical "prototype", which exists implicitly and {replacement of which can break object relationship at all}[http://joost.zeekat.nl/constructors-considered-mildly-confusing.html].
 
-And what? What are the benefits excepting "background cleanness"?
+And what? Are there any benefits excepting "low-level cleanness"?
 
-Well, there is following benefit. Suppose having any object in program, you want to make a very similar object, almost the same, but slightly different. With the proposed approach you can derive new object from the existing one, not worrying about nature of the existing object (existing object may be a Function or not, may have or not proper "prototype" or "constructor" properties):
+Well, there is following benefit. Suppose having any object in program, you want to make a very similar object, almost the same, but slightly different. With the proposed approach <b>you can derive new object from the existing one, not worrying about nature of the existing object</b> (existing object may be a Function or not, may have or not proper "prototype" or "constructor" properties):
 
-  someExistingObject.method1(); // suppose returns "method1"
+  someExistingObject.method1();            // suppose returns "method1" string
 
   myObject = someExistingObject.derive({   // type of someExistingObject does not matter
     method2: function(){
@@ -80,37 +79,38 @@ Well, there is following benefit. Suppose having any object in program, you want
 
   myObject.method1(); // returns "method1"
   myObject.method2(); // returns "method2"
+  myObject.hasOwnProperty('method1'); // false, it is not just copying of properties, it is true delegation
 
 
 === Caution about mix of "true" style with "traditional" style
 
 Unfortunately there is a problem with the proposed "true" prototypal inheritance style.
 
-I treat the approach as straightforward and clear, if you use it in some program system from the scratch.
+The "true" prototypal inheritance style is straightforward and clear, if you use it in a program system from the scratch.
 
 However the approach can be confusing, if you try to mix it with the "traditional" way. At least you cannot completely abstract from the old way and think with the new way only, you should be careful with such mix.
 
 For example, traditionally you use Backbone.Model in this way:
 
   var MyModel = Backbone.Model.extend({});
-  var myInstance = new MyModel(); // myInstance is traditional "instanceof" MyModel
+  var myInstance = new MyModel();           // myInstance is traditional "instanceof" MyModel
 
 If you try to do this:
 
   var MyModel = Backbone.Model.extend({});
-  var myInstance = MyModel.derive();  // myInstance.__proto__ points to MyModel itself instead of MyModel.prototype
+  var myInstance = MyModel.derive();        // myInstance.__proto__ points to MyModel itself instead of MyModel.prototype
 
 myInstance object won't act as expected for an instance of Backbone.Model, because myInstance is not traditional "instanceof" MyModel (and is not "instanceof" Backbone.Model), what the Backbone framework relies on.
 
 
-=== Use for introspection of object hierarchies have been build with different frameworks
+=== Use for lookup in object hierarchies have been build with different frameworks
 
-Frameworks which provides APIs for constructing object hierarchy (most of them simulate classical inheritance) in different ways provides the feature of referencing to ancestor object (up through the hierarchy), well known as "super"-call. Sometimes the feature is provided explicitly, sometimes it is there, but is not documented (and looks like inner __super__ method), sometimes it is just absent.
+Frameworks which provides APIs for constructing object hierarchy (most of them simulate classical inheritance) in different ways provide the feature of referencing to an ancestor object (up through the hierarchy), well known as "super"-reference. Sometimes the feature is provided explicitly; sometimes the feature is there, but is not documented (and looks like inner __super__ method); sometimes the feature is just absent.
 
-TruePrototyping library provides a few properties and methods, which allow to walk through true prototype chain: 'ancestor' and 'ancestors' properties, 'super', 'isAncestorOf' and 'isDescendantOf'. Moreover, they allow to do that in the same way for object hierarchies created by different frameworks. In the mix_with_frameworks directory there are examples of using the mentioned way for object hierarchies created with Propotype, Mootools, Backbone and TruePrototyping - you can clone the repository, open mix_with_frameworks/all.html file in browser and try that.
+TruePrototyping library provides a few properties and methods, which allow to walk through true prototype chain: 'ancestor' and 'ancestors' properties, 'super', 'isAncestorOf' and 'isDescendantOf' methods. Moreover, it allows to do that in the same way for object hierarchies created by different frameworks. In the mix_with_frameworks directory there are examples of using the mentioned way for object hierarchies created with Propotype, Mootools, JavascriptMVC, Backbone and TruePrototyping - you can clone the repository, open mix_with_frameworks/all.html file in browser and try that.
 
 === TODO
 
-* Implementation for an environment which is not ES5-compliant.
+* Implementation for an environment which is not ES5-compliant. For now I am not sure it is actually needed.
 * Maybe it makes sense to implement "super" without necessity to pass ancestor's method name as a first argument. Benefit of the current implementation is only that it is very simple and, at the same time, allows calling any ancestor's method, not the exactly "super" in traditional meaning.
 * Maybe it makes sense to provide a mechanism of preventing conflicts (what, if some other library also has 'ancestor' property?).
