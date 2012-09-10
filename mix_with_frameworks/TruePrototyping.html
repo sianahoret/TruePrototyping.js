@@ -14,7 +14,7 @@
 </head>
 <body>
 
-  <h2>With <a href="https://github.com/sianahoret/TruePrototyping.js" target="_blank">TruePrototyping</a> (own) object model</h2>
+  <h2>With <a href="https://github.com/sianahoret/TruePrototyping.js" target="_blank">TruePrototyping</a> (own) inheritance model</h2>
   <pre class="runnable">
     var BaseModel = {                                                     // this object shouldn't be a Function, as in examples above
         url: function(){
@@ -30,17 +30,44 @@
       }
     });
 
-    var myInstance = MyModel.derive();                                    // 'new' operator is not needed, as in examples above
+    var myInstance = MyModel.derive();                                  // 'new' operator is not needed, as in examples above
+  </pre>
 
-    alert(myInstance.ancestor === MyModel);                               // true (MyModel is immediate ancestor, there is no any 'prototype')
-    alert(myInstance.ancestor.ancestor === BaseModel);                    // true
-
+  <p>Inherited method (implemented with 'ancestor' and 'super'):</p>
+  <pre class="runnable">
+    // on the first level of inheritance chain
     alert(myInstance.url());                    // "/users/ID/somethingExtra" with both approaches
 
-    // The second level of descending
+    // on the second level of inheritance chain
     var myInstance2 = myInstance.derive({});
     alert(myInstance2.url());                   // "/users/ID/somethingExtra/somethingExtra" with approach#1, "/users/ID/somethingExtra" with approach#2
+  </pre>
 
+  <p>ancestor:</p>
+  <pre class="runnable">
+    alert(myInstance.ancestor === MyModel);                             // true (MyModel is immediate ancestor, there is no any 'prototype')
+    alert(myInstance.ancestor.ancestor === BaseModel);                  // true
+  </pre>
+
+  <p>ancestors:</p>
+  <pre class="runnable">
+    myInstance.ancestors;                                               // [ MyModel, BaseModel, Object.prototype ]
+    alert(myInstance.ancestors[0] === MyModel);                         // true
+    alert(myInstance.ancestors[1] === BaseModel);                       // true
+    alert(myInstance.ancestors[2] === Object.prototype);                // true
+  </pre>
+
+  <p>isAncestorOf:</p>
+  <pre class="runnable">
+    alert(MyModel.isAncestorOf(myInstance));                            // true
+    alert(BaseModel.isAncestorOf(myInstance));                          // true
+  </pre>
+
+  <p>isDescendantOf:</p>
+  <pre class="runnable">
+    // isDescendantOf
+    alert(myInstance.isDescendantOf(MyModel.prototype));                // true
+    alert(myInstance.isDescendantOf(BaseModel.prototype));              // true
   </pre>
 
 </body>

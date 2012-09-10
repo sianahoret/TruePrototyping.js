@@ -2,6 +2,10 @@ body {
   padding: 0 10px;
 }
 
+h1 {
+  text-align: center;
+}
+
 div.button-wrapper {
   position: relative;
 }
@@ -26,11 +30,15 @@ pre {
   font-style: normal;
   display: block;
   white-space: pre;
-  margin: 1em 0;
+  margin: 0 0 0.5em 0;
+}
+
+p {
+  margin: 0.1em 0;
 }
 
 iframe {
   width: 100%;
   border: none;
-  height: 600px;
+  height: 70em;
 }

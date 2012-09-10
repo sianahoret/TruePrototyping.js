@@ -17,7 +17,7 @@
 </head>
 <body>
 
-  <h2>With <a href="http://backbonejs.org/#Model-extend" target="_blank">Backbone</a> object model</h2>
+  <h2>With <a href="http://backbonejs.org/#Model-extend" target="_blank">Backbone</a> inheritance model</h2>
   <pre class="runnable">
     var MyModel = Backbone.Model.extend({
       urlRoot : '/users',
@@ -31,17 +31,43 @@
     });
 
     var myInstance = new MyModel();
+  </pre>
 
-    alert(myInstance.ancestor === MyModel.prototype);                     // true
-    alert(myInstance.ancestor.ancestor === Backbone.Model.prototype);     // true
-
+  <p>Inherited method (implemented with 'ancestor' and 'super'):</p>
+  <pre class="runnable">
+    // on the first level of inheritance chain
     alert(myInstance.url());                 // "/users/ID/somethingExtra" with both approaches
 
-    // The second level of descending
+    // on the second level of inheritance chain
     var MyModel2 = MyModel.extend({});
     var myInstance2 = new MyModel2();
     alert(myInstance2.url());                 // "/users/ID/somethingExtra/somethingExtra" with approach#1, "/users/ID/somethingExtra" with approach#2
+  </pre>
 
+  <p>ancestor:</p>
+  <pre class="runnable">
+    alert(myInstance.ancestor === MyModel.prototype);                   // true
+    alert(myInstance.ancestor.ancestor === Backbone.Model.prototype);   // true
+  </pre>
+
+  <p>ancestors:</p>
+  <pre class="runnable">
+    myInstance.ancestors;                                               // [ MyModel.prototype, Backbone.Model.prototype, Object.prototype ]
+    alert(myInstance.ancestors[0] === MyModel.prototype);               // true
+    alert(myInstance.ancestors[1] === Backbone.Model.prototype);        // true
+    alert(myInstance.ancestors[2] === Object.prototype);                // true
+  </pre>
+
+  <p>isAncestorOf:</p>
+  <pre class="runnable">
+    alert(MyModel.prototype.isAncestorOf(myInstance));                  // true
+    alert(Backbone.Model.prototype.isAncestorOf(myInstance));           // true
+  </pre>
+
+  <p>isDescendantOf:</p>
+  <pre class="runnable">
+    alert(myInstance.isDescendantOf(MyModel.prototype));                // true
+    alert(myInstance.isDescendantOf(Backbone.Model.prototype));         // true
   </pre>
 
 </body>

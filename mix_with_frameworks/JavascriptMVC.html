@@ -15,7 +15,7 @@
 </head>
 <body>
 
-  <h2>With <a href="http://v3.javascriptmvc.com/docs/jQuery.Class.html#&who=jQuery.Class" target="_blank">JavaScriptMVC</a> object model</h2>
+  <h2>With <a href="http://v3.javascriptmvc.com/docs/jQuery.Class.html#&who=jQuery.Class" target="_blank">JavaScriptMVC</a> inheritance model</h2>
   <pre class="runnable">
     var BaseModel = $.Class.extend({
       url: function(){
@@ -31,17 +31,43 @@
     });
 
     var myInstance = new MyModel();
+  </pre>
 
+  <p>Inherited method (implemented with 'ancestor' and 'super'):</p>
+  <pre class="runnable">
+    // on the first level of inheritance chain
+    alert(myInstance.url());                    // "/users/ID/somethingExtra" with both approaches
+
+    // on the second level of inheritance chain
+    var MyModel2 = Class.create(MyModel)
+    var myInstance2 = new MyModel2();
+    alert(myInstance2.url());                   // "/users/ID/somethingExtra/somethingExtra" with approach#1, "/users/ID/somethingExtra" with approach#2
+  </pre>
+
+  <p>ancestor:</p>
+  <pre class="runnable">
     alert(myInstance.ancestor === MyModel.prototype);                   // true
     alert(myInstance.ancestor.ancestor === BaseModel.prototype);        // true
+  </pre>
 
-    alert(myInstance.url());                  // "/users/ID/somethingExtra" with both approaches
+  <p>ancestors:</p>
+  <pre class="runnable">
+    myInstance.ancestors;                                               // [ MyModel.prototype, BaseModel.prototype, Object.prototype ]
+    alert(myInstance.ancestors[0] === MyModel.prototype);               // true
+    alert(myInstance.ancestors[1] === BaseModel.prototype);             // true
+    alert(myInstance.ancestors[2] === Object.prototype);                // true
+  </pre>
 
-    // The second level of descending
-    var MyModel2 = MyModel.extend({});
-    var myInstance2 = new MyModel2();
-    alert(myInstance2.url());                 // "/users/ID/somethingExtra/somethingExtra" with approach#1, "/users/ID/somethingExtra" with approach#2
+  <p>isAncestorOf:</p>
+  <pre class="runnable">
+    alert(MyModel.prototype.isAncestorOf(myInstance));                  // true
+    alert(BaseModel.prototype.isAncestorOf(myInstance));                // true
+  </pre>
 
+  <p>isDescendantOf:</p>
+  <pre class="runnable">
+    alert(myInstance.isDescendantOf(MyModel.prototype));                // true
+    alert(myInstance.isDescendantOf(BaseModel.prototype));              // true
   </pre>
 
 </body>
