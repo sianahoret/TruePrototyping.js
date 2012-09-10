@@ -92,13 +92,13 @@ However the approach can be confusing, if you try to mix it with the "traditiona
 
 For example, traditionally you use Backbone.Model in this way:
 
-  var MyModel = Backbone.Model.extend({});
-  var myInstance = new MyModel();           // myInstance is traditional "instanceof" MyModel
+  MyModel = Backbone.Model.extend({});
+  myInstance = new MyModel();           // myInstance is traditional "instanceof" MyModel
 
 If you try to do this:
 
-  var MyModel = Backbone.Model.extend({});
-  var myInstance = MyModel.derive();        // myInstance.__proto__ points to MyModel itself instead of MyModel.prototype
+  MyModel = Backbone.Model.extend({});
+  myInstance = MyModel.derive();        // myInstance.__proto__ points to MyModel itself instead of MyModel.prototype
 
 myInstance object won't act as expected for an instance of Backbone.Model, because myInstance is not traditional "instanceof" MyModel (and is not "instanceof" Backbone.Model), what the Backbone framework relies on.
 
