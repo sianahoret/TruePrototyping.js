@@ -42,7 +42,7 @@ I try to achieve two aims:
 There are two main features are provided by the library:
 
 'derive' method :: Compact way for construction of object hierarchy with clear prototypal inheritance
-'ancestor' and 'ancestors' properties, 'super', 'isAncestorOf' and 'isDescendantOf' methods :: Convenient way for inspecting and lookup of true prototype chain, even if object hierarchy was created with "traditional" style.
+'ancestor' and 'ancestors' properties, 'super', 'isAncestorOf' and 'isDescendantOf' methods :: Convenient way for introspection and lookup of true prototype chain, even if object hierarchy was created with "traditional" style.
 
 === Construction of object hierarchy with 'derive' method
 
@@ -104,7 +104,7 @@ If you try to do this:
 myInstance object won't act as expected for an instance of Backbone.Model, because myInstance is not traditional "instanceof" MyModel (and is not "instanceof" Backbone.Model), what the Backbone framework relies on.
 
 
-=== Use for inspecting object hierarchies of different frameworks
+=== Use for introspection of object hierarchies have been build with different frameworks
 
 Frameworks which provides APIs for constructing object hierarchy (most of them simulate classical inheritance) in different ways provides the feature of referencing to ancestor object (up through the hierarchy), well known as "super"-call. Sometimes the feature is provided explicitly, sometimes it is there, but is not documented (and looks like inner __super__ method), sometimes it is just absent.
 
@@ -114,3 +114,4 @@ TruePrototyping library provides a few properties and methods, which allow to wa
 
 * Implementation for an environment which is not ES5-compliant.
 * Maybe it makes sense to implement "super" without necessity to pass ancestor's method name as a first argument. Benefit of the current implementation is only that it is very simple and, at the same time, allows calling any ancestor's method, not the exactly "super" in traditional meaning.
+* Maybe it makes sense to provide a mechanism of preventing conflicts (what, if some other library also has 'ancestor' property?).

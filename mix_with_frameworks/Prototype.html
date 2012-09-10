@@ -15,7 +15,7 @@
 </head>
 <body>
 
-  <h2>With <a href="http://prototypejs.org/learn/class-inheritance" target="_blank">Prototype</a></h2>
+  <h2>With <a href="http://prototypejs.org/learn/class-inheritance" target="_blank">Prototype</a> object model</h2>
   <pre class="runnable">
     var BaseModel = Class.create({
       url: function(){
@@ -25,8 +25,8 @@
 
     var MyModel = Class.create(BaseModel, {
       url: function(){
-        return MyModel.prototype.super('url') + '/somethingExtra';
-        // return this.ancestor.super('url') + '/somethingExtra';       // this approach is also possible
+        return this.ancestor.super('url') + '/somethingExtra';          // approach 1
+        // return MyModel.prototype.super('url') + '/somethingExtra';   // approach 2
       }
     });
 
@@ -35,7 +35,12 @@
     alert(myInstance.ancestor === MyModel.prototype);                   // true
     alert(myInstance.ancestor.ancestor === BaseModel.prototype);        // true
 
-    alert(myInstance.url());                                            // "/users/ID/somethingExtra"
+    alert(myInstance.url());                    // "/users/ID/somethingExtra" with both approaches
+
+    // The second level of descending
+    var MyModel2 = Class.create(MyModel)
+    var myInstance2 = new MyModel2();
+    alert(myInstance2.url());                   // "/users/ID/somethingExtra/somethingExtra" with approach#1, "/users/ID/somethingExtra" with approach#2
   </pre>
 
 </body>
