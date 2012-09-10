@@ -9,24 +9,24 @@
   <script type="text/javascript" src="js/mix_test.js"></script>
   <script type="text/javascript" src="../TruePrototyping.js"></script>
 
-  <script type='text/javascript' src='js/simple_inheritance.js'></script>
+  <script type='text/javascript' src='js/javascriptmvc.jquery.class.js'></script>
 
   <link type="text/css" rel="stylesheet" href="css/mix_test.css"/>
 </head>
 <body>
 
-  <h2>With object model of <a href="http://ejohn.org/blog/simple-javascript-inheritance/" target="_blank">John Resig's Simple JavaScript Inheritance</a> (the approach is used in <a href="http://v3.javascriptmvc.com/docs/jQuery.Class.html#&who=jQuery.Class" target="_blank">jQuery.Class of JavaScriptMVC</a>)</h2>
+  <h2>With <a href="http://v3.javascriptmvc.com/docs/jQuery.Class.html#&who=jQuery.Class" target="_blank">JavaScriptMVC</a> object model</h2>
   <pre class="runnable">
-    var BaseModel = Class.extend({
+    var BaseModel = $.Class.extend({
       url: function(){
         return '/users/ID';
       }
     });
 
-    var MyModel = BaseModel.extend({
+    BaseModel.extend('MyModel', {
       url: function(){
-        return this.ancestor.super('url') + '/somethingExtra';          // approach 1
-        // return MyModel.prototype.super('url') + '/somethingExtra';   // approach 2
+        // return this.ancestor.super('url') + '/somethingExtra';          // approach 1
+        return MyModel.prototype.super('url') + '/somethingExtra';   // approach 2
       }
     });
 
