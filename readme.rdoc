@@ -33,15 +33,11 @@ Actually I am upset by most of popular javascript libraries and frameworks not o
 
 === Brief overview of TruePrototyping.js library
 
-The library tries to achieve the following aims:
-1. To make "true" prototypal programming in ES5-compliant environment as possible compact and pleasing. As it is mentioned above, ES5 standard intends a support of the style, but, as for me, the way is too verbose. 
-2. To provide ability to use the approach in non-ES5-compliant environment with the same syntax.
-3. To make lookup through true prototype chain easy and clear (regardless to a way the chain was created).
+Aims of the library and corresponding stuff:
 
-So the library provides the following groups of properties and methods:
-
-A compact syntax for construction of object hierarchy with intuitively clear object relationship :: 'derive' method
-A convenient and uniform way for introspection and lookup of true prototype chain, even if object hierarchy was created with "traditional" style :: 'ancestor' and 'ancestors' properties, 'super', 'isAncestorOf' and 'isDescendantOf' methods
+<b>Aim</b> :: <b>Properties any object expanded with</b>
+A compact syntax for construction of object hierarchy with intuitively clear object relationship :: *derive* method
+A convenient and uniform way for introspection and lookup of true prototype chain, even if object hierarchy was created with "traditional" style :: *ancestor* and *ancestors* properties, *super*, *isAncestorOf* and *isDescendantOf* methods
 
 === Construction of object hierarchy with 'derive' method
 
