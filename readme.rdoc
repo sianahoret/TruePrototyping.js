@@ -28,7 +28,7 @@ So the idea is not new. A couple of links:
 * {Demonstration of the true style by Tim Caswell, a Node.js developer}[http://howtonode.org/prototypical-inheritance]
 * {My article (in Russian)}[http://innerbytes.net/proto/javascript/clear_prototipal_inheritance.htm]
 
-Actually I am upset by most of popular javascript libraries and frameworks not only use the "traditional" style, but even enhance imitation of Classical OOP with class-like APIs, while I do not know a library which follows the true prototypal inheritance style. I guess why it is so (see Problems section below), but I assume the "true style" deserves to be more used than it is at nowadays.
+Actually I am upset by most of popular javascript libraries and frameworks not only use the "traditional" style, but even enhance imitation of Classical OOP with class-like APIs, while I do not know a library which follows the true prototypal inheritance style. I guess why it is so (see Caution section below), but I assume the "true style" deserves to be more used than it is at nowadays.
 
 
 === Brief overview of TruePrototyping.js library
@@ -39,7 +39,7 @@ Aims of the library and corresponding stuff:
 A compact syntax for construction of object hierarchy with intuitively clear object relationship :: *derive* method
 A convenient and uniform way for introspection and lookup of true prototype chain, even if object hierarchy was created with "traditional" style :: *ancestor* and *ancestors* properties, *super*, *isAncestorOf* and *isDescendantOf* methods
 
-=== Construction of object hierarchy with 'derive' method
+=== Creation of object hierarchy with 'derive' method
 
 After you include the TruePrototyping.js into your program, any javascript object has 'derive' method and you can construct inheritance chain in the following way:
 
@@ -99,11 +99,21 @@ If you try to do this:
 myInstance object won't act as expected for an instance of Backbone.Model, because myInstance is not traditional "instanceof" MyModel (and is not "instanceof" Backbone.Model), what the Backbone framework relies on.
 
 
-=== Use for lookup in object hierarchies have been build with different frameworks
+=== Use for lookup of object hierarchies have been build with different frameworks
 
 Frameworks which provides APIs for constructing object hierarchy (most of them simulate classical inheritance) in different ways provide the feature of referencing to an ancestor object (up through the hierarchy), well known as "super"-reference. Sometimes the feature is provided explicitly; sometimes the feature is there, but is not documented (and looks like inner __super__ method); sometimes the feature is just absent.
 
-TruePrototyping library provides a few properties and methods, which allow to walk through true prototype chain: 'ancestor' and 'ancestors' properties, 'super', 'isAncestorOf' and 'isDescendantOf' methods. Moreover, it allows to do that in the same way for object hierarchies created by different frameworks. In the mix_with_frameworks directory there are examples of using the mentioned way for object hierarchies created with Propotype, Mootools, JavascriptMVC, Backbone and TruePrototyping - you can clone the repository, open mix_with_frameworks/all.html file in browser and try that.
+TruePrototyping library provides a few properties and methods, which allow to walk through true prototype chain: 'ancestor' and 'ancestors' properties, 'super', 'isAncestorOf' and 'isDescendantOf' methods. Moreover, it allows to do that in the same way for object hierarchies created by different frameworks.
+
+
+=== What is ready to review/try
+
+Additionally to the library itself (TruePrototyping.js file) this repository contains some program code which you can review and run:
+
+1. There are examples of using TruePrototyping library for lookup of object hierarchies created with Propotype, Mootools, JavascriptMVC, Backbone and TruePrototyping itself. If you open <b>mix_with_frameworks/all.html</b> file in any browser, you can review the code and try to run it.
+
+2. The library is tested with jasmine test framework. You can open <b>spec/spec.html</b> in any browser to see a result of all tests execution and you can review a source code of the tests in <b>spec/*.js</b> files.
+
 
 === TODO
 
