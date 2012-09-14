@@ -47,13 +47,13 @@
                                                 // "/users/ID/somethingExtra" with approach#2
   </pre>
 
-  <p>ancestor:</p>
+  <p>tpAncestor:</p>
   <pre class="runnable">
     alert(myInstance.tpAncestor === MyModel.prototype);                   // true
     alert(myInstance.tpAncestor.tpAncestor === BaseModel.prototype);        // true
   </pre>
 
-  <p>ancestors:</p>
+  <p>tpAncestors:</p>
   <pre class="runnable">
     myInstance.tpAncestors;                                               // [ MyModel.prototype, BaseModel.prototype, Object.prototype ]
     alert(myInstance.tpAncestors[0] === MyModel.prototype);               // true
@@ -61,13 +61,13 @@
     alert(myInstance.tpAncestors[2] === Object.prototype);                // true
   </pre>
 
-  <p>isAncestorOf:</p>
+  <p>tpIsAncestorOf:</p>
   <pre class="runnable">
     alert(MyModel.prototype.tpIsAncestorOf(myInstance));                  // true
     alert(BaseModel.prototype.tpIsAncestorOf(myInstance));                // true
   </pre>
 
-  <p>isDescendantOf:</p>
+  <p>tpIsDescendantOf:</p>
   <pre class="runnable">
     alert(myInstance.tpIsDescendantOf(MyModel.prototype));                // true
     alert(myInstance.tpIsDescendantOf(BaseModel.prototype));              // true

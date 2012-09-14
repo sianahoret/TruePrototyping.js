@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+
+  <script type="text/javascript" src="js/jquery.js"></script>
+  <script type="text/javascript" src="js/mix_test.js"></script>
+  <script type="text/javascript" src="../TruePrototyping.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="css/mix_test.css"/>
+
+</head>
+<body>
+
+  <h2>With <a href="https://github.com/sianahoret/TruePrototyping.js" target="_blank">TruePrototyping</a> (own) inheritance model, when prefix is changed to underscore.</h2>
+  <pre class="runnable">(
+    // Change default 'tp' prefix to '_' (do this after including TruePrototyping.js and before using its API).
+    TruePrototyping.usePrefix('_');     
+
+    BaseModel = {                                                     // this object shouldn't be a Function, as in examples above
+        url: function(){
+          return '/users/ID';
+        }
+    };
+
+    MyModel = BaseModel._Derive({
+      url: function(){
+        return this._Ancestor._Super('url') + '/somethingExtra';     // approach 1
+        // return MyModel._Super('url') + '/somethingExtra';         // approach 2
+                          // note, that super is called immediately on MyModel, not on MyModel.prototype as in examples above
+      }
+    });
+
+    myInstance = MyModel._Derive();                                  // 'new' operator is not needed, as in examples above
+  </pre>
+
+  <p>Inherited method (implemented with 'ancestor' and 'super'):</p>
+  <pre class="runnable">
+    // on the first level of inheritance chain
+    alert(myInstance.url());                    // "/users/ID/somethingExtra" with both approaches
+
+    // on the second level of inheritance chain
+    myInstance2 = myInstance._Derive({});
+    alert(myInstance2.url());                   // "/users/ID/somethingExtra/somethingExtra" with approach#1
+                                                // "/users/ID/somethingExtra" with approach#2
+  </pre>
+
+  <p>_Ancestor:</p>
+  <pre class="runnable">
+    alert(myInstance._Ancestor === MyModel);                             // true (MyModel is immediate ancestor, there is no any 'prototype')
+    alert(myInstance._Ancestor._Ancestor === BaseModel);                // true
+  </pre>
+
+  <p>_Ancestors:</p>
+  <pre class="runnable">
+    myInstance._Ancestors;                                               // [ MyModel, BaseModel, Object.prototype ]
+    alert(myInstance._Ancestors[0] === MyModel);                         // true
+    alert(myInstance._Ancestors[1] === BaseModel);                       // true
+    alert(myInstance._Ancestors[2] === Object.prototype);                // true
+  </pre>
+
+  <p>_IsAncestorOf:</p>
+  <pre class="runnable">
+    alert(MyModel._IsAncestorOf(myInstance));                            // true
+    alert(BaseModel._IsAncestorOf(myInstance));                          // true
+  </pre>
+
+  <p>_IsDescendantOf:</p>
+  <pre class="runnable">
+    alert(myInstance._IsDescendantOf(MyModel));                          // true
+    alert(myInstance._IsDescendantOf(BaseModel));                        // true
+  </pre>
+
+</body>
+</html>

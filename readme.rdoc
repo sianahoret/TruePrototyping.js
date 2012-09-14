@@ -119,4 +119,3 @@ Additionally to the library itself (TruePrototyping.js file) this repository con
 
 * Implementation for an environment which is not [ES5-compliant]{http://kangax.github.com/es5-compat-table/}. For now I am not sure it is actually needed.
 * Maybe it makes sense to implement "super" without necessity to pass ancestor's method name as a first argument. Benefit of the current implementation is only that it is very simple and, at the same time, allows calling any ancestor's method, not the exactly "super" in traditional meaning.
-* Maybe it makes sense to provide a mechanism of preventing conflicts (what, if some other library also has 'ancestor' property?).

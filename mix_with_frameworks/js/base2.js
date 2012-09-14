@@ -109,7 +109,7 @@ Base = Base.extend({
 		this.extend(arguments[0]);
 	}
 }, {
-	ancestor: Object,
+	tpAncestor: Object,
 	version: "1.1",
 	
 	forEach: function(object, block, context) {

@@ -2693,7 +2693,7 @@ Ajax.PeriodicalUpdater = Class.create(Ajax.Base, {
 
   Object.extend(methods, {
     recursivelyCollect:   recursivelyCollect,
-    ancestors:            ancestors,
+    tpAncestors:            ancestors,
     descendants:          descendants,
     firstDescendant:      firstDescendant,
     immediateDescendants: immediateDescendants,
