@@ -22,15 +22,15 @@
         }
     };
 
-    MyModel = BaseModel.derive({
+    MyModel = BaseModel.tpDerive({
       url: function(){
-        return this.ancestor.super('url') + '/somethingExtra';            // approach 1
-        // return MyModel.super('url') + '/somethingExtra';               // approach 2
+        return this.tpAncestor.tpSuper('url') + '/somethingExtra';            // approach 1
+        // return MyModel.tpSuper('url') + '/somethingExtra';               // approach 2
                           // note, that super is called immediately on MyModel, not on MyModel.prototype as in examples above
       }
     });
 
-    myInstance = MyModel.derive();                                  // 'new' operator is not needed, as in examples above
+    myInstance = MyModel.tpDerive();                                  // 'new' operator is not needed, as in examples above
   </pre>
 
   <p>Inherited method (implemented with 'ancestor' and 'super'):</p>
@@ -39,35 +39,36 @@
     alert(myInstance.url());                    // "/users/ID/somethingExtra" with both approaches
 
     // on the second level of inheritance chain
-    myInstance2 = myInstance.derive({});
-    alert(myInstance2.url());                   // "/users/ID/somethingExtra/somethingExtra" with approach#1, "/users/ID/somethingExtra" with approach#2
+    myInstance2 = myInstance.tpDerive({});
+    alert(myInstance2.url());                   // "/users/ID/somethingExtra/somethingExtra" with approach#1
+                                                // "/users/ID/somethingExtra" with approach#2
   </pre>
 
   <p>ancestor:</p>
   <pre class="runnable">
-    alert(myInstance.ancestor === MyModel);                             // true (MyModel is immediate ancestor, there is no any 'prototype')
-    alert(myInstance.ancestor.ancestor === BaseModel);                  // true
+    alert(myInstance.tpAncestor === MyModel);                             // true (MyModel is immediate ancestor, there is no any 'prototype')
+    alert(myInstance.tpAncestor.tpAncestor === BaseModel);                // true
   </pre>
 
   <p>ancestors:</p>
   <pre class="runnable">
-    myInstance.ancestors;                                               // [ MyModel, BaseModel, Object.prototype ]
-    alert(myInstance.ancestors[0] === MyModel);                         // true
-    alert(myInstance.ancestors[1] === BaseModel);                       // true
-    alert(myInstance.ancestors[2] === Object.prototype);                // true
+    myInstance.tpAncestors;                                               // [ MyModel, BaseModel, Object.prototype ]
+    alert(myInstance.tpAncestors[0] === MyModel);                         // true
+    alert(myInstance.tpAncestors[1] === BaseModel);                       // true
+    alert(myInstance.tpAncestors[2] === Object.prototype);                // true
   </pre>
 
   <p>isAncestorOf:</p>
   <pre class="runnable">
-    alert(MyModel.isAncestorOf(myInstance));                            // true
-    alert(BaseModel.isAncestorOf(myInstance));                          // true
+    alert(MyModel.tpIsAncestorOf(myInstance));                            // true
+    alert(BaseModel.tpIsAncestorOf(myInstance));                          // true
   </pre>
 
   <p>isDescendantOf:</p>
   <pre class="runnable">
     // isDescendantOf
-    alert(myInstance.isDescendantOf(MyModel.prototype));                // true
-    alert(myInstance.isDescendantOf(BaseModel.prototype));              // true
+    alert(myInstance.tpIsDescendantOf(MyModel.prototype));                // true
+    alert(myInstance.tpIsDescendantOf(BaseModel.prototype));              // true
   </pre>
 
 </body>

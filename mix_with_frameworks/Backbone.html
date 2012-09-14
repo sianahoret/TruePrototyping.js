@@ -25,8 +25,8 @@
       id: "ID",
 
       url: function(){
-        return this.ancestor.super('url') + '/somethingExtra';
-        // return MyModel.prototype.super('url') + '/somethingExtra';     // the alternative approach, it provides more strong behavior on all descending levels
+        return this.tpAncestor.tpSuper('url') + '/somethingExtra';
+        // return MyModel.prototype.tpSuper('url') + '/somethingExtra';     // the alternative approach, it provides more strong behavior on all descending levels
       }
     });
 
@@ -41,33 +41,34 @@
     // on the second level of inheritance chain
     MyModel2 = MyModel.extend({});
     myInstance2 = new MyModel2();
-    alert(myInstance2.url());                 // "/users/ID/somethingExtra/somethingExtra" with approach#1, "/users/ID/somethingExtra" with approach#2
+    alert(myInstance2.url());                 // "/users/ID/somethingExtra/somethingExtra" with approach#1
+                                              // "/users/ID/somethingExtra" with approach#2
   </pre>
 
   <p>ancestor:</p>
   <pre class="runnable">
-    alert(myInstance.ancestor === MyModel.prototype);                   // true
-    alert(myInstance.ancestor.ancestor === Backbone.Model.prototype);   // true
+    alert(myInstance.tpAncestor === MyModel.prototype);                   // true
+    alert(myInstance.tpAncestor.tpAncestor === Backbone.Model.prototype);   // true
   </pre>
 
   <p>ancestors:</p>
   <pre class="runnable">
-    myInstance.ancestors;                                               // [ MyModel.prototype, Backbone.Model.prototype, Object.prototype ]
-    alert(myInstance.ancestors[0] === MyModel.prototype);               // true
-    alert(myInstance.ancestors[1] === Backbone.Model.prototype);        // true
-    alert(myInstance.ancestors[2] === Object.prototype);                // true
+    myInstance.tpAncestors;                                               // [ MyModel.prototype, Backbone.Model.prototype, Object.prototype ]
+    alert(myInstance.tpAncestors[0] === MyModel.prototype);               // true
+    alert(myInstance.tpAncestors[1] === Backbone.Model.prototype);        // true
+    alert(myInstance.tpAncestors[2] === Object.prototype);                // true
   </pre>
 
   <p>isAncestorOf:</p>
   <pre class="runnable">
-    alert(MyModel.prototype.isAncestorOf(myInstance));                  // true
-    alert(Backbone.Model.prototype.isAncestorOf(myInstance));           // true
+    alert(MyModel.prototype.tpIsAncestorOf(myInstance));                  // true
+    alert(Backbone.Model.prototype.tpIsAncestorOf(myInstance));           // true
   </pre>
 
   <p>isDescendantOf:</p>
   <pre class="runnable">
-    alert(myInstance.isDescendantOf(MyModel.prototype));                // true
-    alert(myInstance.isDescendantOf(Backbone.Model.prototype));         // true
+    alert(myInstance.tpIsDescendantOf(MyModel.prototype));                // true
+    alert(myInstance.tpIsDescendantOf(Backbone.Model.prototype));         // true
   </pre>
 
 </body>

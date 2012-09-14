@@ -1,4 +1,4 @@
-describeProperty("super", function() {
+describeProperty("tpSuper", function() {
   shouldBeDefinedOnAnyObject();
 
   describe("Should call on ancestor the specified method", function(){
@@ -10,11 +10,11 @@ describeProperty("super", function() {
           return this.name + " " + this.surname;
         }
       };
-      john = Person.derive({
+      john = Person.tpDerive({
         name: "John",
         surname: "Lennon",
         greeting: function(){
-          return "Hello, I am " + this.super("fullName");
+          return "Hello, I am " + this.tpSuper("fullName");
         }
       });
     });
@@ -25,7 +25,7 @@ describeProperty("super", function() {
 
     it("with a different name name", function(){
       john.fullName = function(){
-        return "My full name is " + this.super("fullName");
+        return "My full name is " + this.tpSuper("fullName");
       };
       expect(john.fullName()).toEqual("My full name is John Lennon");
     })

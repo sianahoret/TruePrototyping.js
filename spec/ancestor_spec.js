@@ -1,4 +1,4 @@
-describeProperty("ancestor", function() {
+describeProperty("tpAncestor", function() {
   shouldBeDefinedOnAnyObject();
 
   describe("Should point to the actual object's prototype", function(){
@@ -6,7 +6,7 @@ describeProperty("ancestor", function() {
     describe("when the object has been created with 'derive' method -", function(){
       it("to the object which 'derive' was called on", function(){
         var Person = {};
-        var Serg = Person.derive();
+        var Serg = Person.tpDerive();
         expect(Serg[_property_]).toBe(Person);
       });
     });
@@ -25,7 +25,7 @@ describeProperty("ancestor", function() {
 
 });
 
-describeProperty("ancestors", function() {
+describeProperty("tpAncestors", function() {
 
   shouldBeDefinedOnAnyObject();
 
@@ -49,7 +49,7 @@ describeProperty("ancestors", function() {
 
 });
 
-describeProperty("isAncestorOf", function() {
+describeProperty("tpIsAncestorOf", function() {
 
   shouldBeDefinedOnAnyObject();
 
@@ -87,7 +87,7 @@ describeProperty("isAncestorOf", function() {
 
 });
 
-describeProperty("isDescendantOf", function() {
+describeProperty("tpIsDescendantOf", function() {
   shouldBeDefinedOnAnyObject();
 
   describe("Should return true, if the respondent object", function(){

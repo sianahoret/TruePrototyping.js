@@ -46,8 +46,8 @@ beforeEach(function () {
 
 beforeEach(function(){
   Person = {};
-  Employee = Person.derive();
-  Serg = Employee.derive();
+  Employee = Person.tpDerive();
+  Serg = Employee.tpDerive();
 
   objectCreatedByFunction = new Number(5);
 

@@ -47,17 +47,17 @@ After you include the TruePrototyping.js into your program, any javascript objec
     ... // some properties
   };
 
-  Employee = Person.derive({
+  Employee = Person.tpDerive({
     ... // some Employee specific properties
   });
 
-  John = Employee.derive({
+  John = Employee.tpDerive({
     ... // some John specific properties
   });
 
 <b>Behind the scene, as well as on the scene, there is a chain of delegation containing only the objects you've defined</b> and nothing more:
-  Employee.ancestor === Person // Employee.__proto__ === Person
-  john.ancestor === Employee   // john.__proto__ === Employee
+  Employee.tpAncestor === Person // Employee.__proto__ === Person
+  john.tpAncestor === Employee   // john.__proto__ === Employee
 
 There is no mystical "prototype", which exists implicitly and {replacement of which can break object relationship at all}[http://joost.zeekat.nl/constructors-considered-mildly-confusing.html].
 
@@ -67,7 +67,7 @@ Well, there is following benefit. Suppose having any object in program, you want
 
   someExistingObject.method1();            // suppose returns "method1" string
 
-  myObject = someExistingObject.derive({   // type of someExistingObject does not matter
+  myObject = someExistingObject.tpDerive({   // type of someExistingObject does not matter
     method2: function(){
       return "method2";
     };
@@ -94,7 +94,7 @@ For example, traditionally you use Backbone.Model in this way:
 If you try to do this:
 
   MyModel = Backbone.Model.extend({});
-  myInstance = MyModel.derive();        // myInstance.__proto__ points to MyModel itself instead of MyModel.prototype
+  myInstance = MyModel.tpDerive();        // myInstance.__proto__ points to MyModel itself instead of MyModel.prototype
 
 myInstance object won't act as expected for an instance of Backbone.Model, because myInstance is not traditional "instanceof" MyModel (and is not "instanceof" Backbone.Model), what the Backbone framework relies on.
 

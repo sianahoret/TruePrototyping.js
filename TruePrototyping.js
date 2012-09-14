@@ -1,4 +1,8 @@
 ;(function(){
+  
+  TruePrototyping = {
+    noConflictPrefix: 'tp'
+  };
 
   // Fallback for ES3-compliant environment
   //
@@ -39,7 +43,7 @@
   This is a syntactic sugar over ES5 Object.create.
   You can create an object with Object.create immediately, if you like that way, all properties and methods defined below will still work.
   */
-  Object.defineProperty(Object.prototype, "derive", {
+  Object.defineProperty(Object.prototype, TruePrototyping.noConflictPrefix + "Derive", {
     value: function(properties){
       var newObject = Object.create(this);
       if(properties && typeof(properties)==="object"){
@@ -57,7 +61,7 @@
   /** ancestor
   This is a syntactic sugar over ES5 Object.getPrototypeOf.
   */
-  Object.defineProperty(Object.prototype, "ancestor", {
+  Object.defineProperty(Object.prototype, TruePrototyping.noConflictPrefix + "Ancestor", {
     get: function(){ return Object.getPrototypeOf(this); },
     enumerable: false
   });
@@ -65,11 +69,11 @@
   /** super
   This is a short way to call ancestor's method on 'this' object.
   */
-  Object.defineProperty(Object.prototype, "super", {
+  Object.defineProperty(Object.prototype, "tpSuper", {
     value: function(){ /* methodName, *methodArgs */
       var args = Array.prototype.slice.call(arguments);
       var methodName = args.shift();
-      return this.ancestor[methodName].apply(this, args);
+      return this.tpAncestor[methodName].apply(this, args);
     },
     enumerable: false
   });
@@ -77,9 +81,9 @@
   /** ancestors
   Array of ancestors, where first element is a nearest ancestor.
   */
-  Object.defineProperty(Object.prototype, "ancestors", {
+  Object.defineProperty(Object.prototype, TruePrototyping.noConflictPrefix + "Ancestors", {
     get: function(){
-      return this.ancestor ? [this.ancestor].concat(this.ancestor.ancestors) : [];
+      return this.tpAncestor ? [this.tpAncestor].concat(this.tpAncestor.tpAncestors) : [];
     },
     enumerable: false
   });
@@ -87,7 +91,7 @@
   /** isAncestorOf
   Returns true, if this is one of the passed object's ancestors.
   */
-  Object.defineProperty(Object.prototype, "isAncestorOf", {
+  Object.defineProperty(Object.prototype, TruePrototyping.noConflictPrefix + "IsAncestorOf", {
     value: function(obj){
       return this.isPrototypeOf(obj);
     },
@@ -97,7 +101,7 @@
   /** isDescendantOf
   Returns true, if the passed object is in prototype chain of this.
   */
-  Object.defineProperty(Object.prototype, "isDescendantOf", {
+  Object.defineProperty(Object.prototype, TruePrototyping.noConflictPrefix + "IsDescendantOf", {
     value: function(obj){
       return obj.isPrototypeOf(this);
     },
