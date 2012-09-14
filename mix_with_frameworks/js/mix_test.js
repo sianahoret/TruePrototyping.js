@@ -3,7 +3,9 @@ jQuery.noConflict();
 
 
 (function($) {
-
+  
+  window.runExample = function(code){ eval(code); };
+  
   $(function() {
     // Set up the "play" buttons for each runnable code example.
     var bootstrapCode = $('.runnable:first').text();
@@ -14,7 +16,7 @@ jQuery.noConflict();
       $(code).before($buttonWrapper);
       var $button = $('<div class="run" title="Run"></div>');
       $button.click(function(){
-        eval(bootstrapCode + $(code).text());
+        runExample(bootstrapCode + $(code).text());
       });
       $buttonWrapper.append($button);
     });

@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+
+  <script type="text/javascript" src="js/jquery.js"></script>
+  <script type="text/javascript" src="js/mix_test.js"></script>
+  <script type="text/javascript" src="../TruePrototyping.js"></script>
+  
+  <script type="text/javascript" src="js/coffee-script.js"></script>
+  <script type="text/javascript">window.runExample = function(code){ eval(CoffeeScript.compile(code)) };</script>
+
+  <link type="text/css" rel="stylesheet" href="css/mix_test.css"/>
+</head>
+<body>
+
+  <h2>With <a href="http://coffeescript.org/#classes" target="_blank">CoffeeScript</a> inheritance model</h2>
+  <pre class="runnable">
+    class BaseModel
+      url: ->
+        '/users/ID';
+
+    class MyModel extends BaseModel
+      url: ->
+        @.tpAncestor.tpSuper('url') + '/somethingExtra'               # approach 1
+        #MyModel::.tpSuper('url') + '/somethingExtra';                # approach 2
+
+    myInstance = new MyModel
+  </pre>
+
+  <p>Inherited method (implemented with 'tpAncestor' and 'tpSuper'):</p>
+  <pre class="runnable">
+    # on the first level of inheritance chain
+    alert myInstance.url()                                            # "/users/ID/somethingExtra" with both approaches
+
+    # on the second level of inheritance chain
+    
+    class MyModel2 extends MyModel
+    myInstance2 = new MyModel2
+    alert myInstance2.url()                                           # with approach#1: "/users/ID/somethingExtra/somethingExtra" 
+                                                                      # with approach#2: "/users/ID/somethingExtra"
+  </pre>
+
+  <p>tpAncestor:</p>
+  <pre class="runnable">
+    #
+    alert myInstance.tpAncestor == MyModel::                          # true
+    alert myInstance.tpAncestor.tpAncestor == BaseModel::             # true
+  </pre>
+
+  <p>tpAncestors:</p>
+  <pre class="runnable">
+    #
+    myInstance.tpAncestors                                            # [ MyModel.prototype, BaseModel.prototype, Object.prototype ]
+    alert myInstance.tpAncestors[0] == MyModel::                      # true
+    alert myInstance.tpAncestors[1] == BaseModel::                    # true
+    alert myInstance.tpAncestors[2] == Object::                       # true
+  </pre>
+
+  <p>tpIsAncestorOf:</p>
+  <pre class="runnable">
+    #
+    alert MyModel::.tpIsAncestorOf(myInstance)                        # true
+    alert BaseModel::.tpIsAncestorOf(myInstance)                      # true
+  </pre>
+
+  <p>tpIsDescendantOf:</p>
+  <pre class="runnable">
+    #
+    alert myInstance.tpIsDescendantOf(MyModel::)                      # true
+    alert myInstance.tpIsDescendantOf(BaseModel::)                    # true
+  </pre>
+
+</body>
+</html>
