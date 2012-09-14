@@ -40,5 +40,9 @@ p {
 iframe {
   width: 100%;
   border: none;
-  height: 70em;
+  height: 71em;
+}
+
+iframe.long {
+  height: 140em;
 }

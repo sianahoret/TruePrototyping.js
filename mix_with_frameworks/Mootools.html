@@ -35,16 +35,16 @@
     myInstance = new MyModel();
   </pre>
 
-  <p>Inherited method (implemented with 'ancestor' and 'super'):</p>
+  <p>Inherited method (implemented with 'tpAncestor' and 'tpSuper'):</p>
   <pre class="runnable">
     // on the first level of inheritance chain
-    alert(myInstance.url());                    // "/users/ID/somethingExtra" with both approaches
+    alert(myInstance.url());                                              // "/users/ID/somethingExtra" with both approaches
 
     // on the second level of inheritance chain
     MyModel2 = new Class({ Extends: MyModel });
     myInstance2 = new MyModel2();
-    alert(myInstance2.url());                   // with approach#1: "/users/ID/somethingExtra/somethingExtra"
-                                                // with approach#2: "/users/ID/somethingExtra"
+    alert(myInstance2.url());                                             // with approach#1: "/users/ID/somethingExtra/somethingExtra"
+                                                                          // with approach#2: "/users/ID/somethingExtra"
   </pre>
 
   <p>tpAncestor:</p>
