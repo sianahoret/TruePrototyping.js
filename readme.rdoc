@@ -57,7 +57,7 @@ After you include the TruePrototyping.js into your program, any javascript objec
 
 <b>Behind the scene, as well as on the scene, there is a chain of delegation containing only the objects you've defined</b> and nothing more:
   Employee.tpAncestor === Person // Employee.__proto__ === Person
-  john.tpAncestor === Employee   // john.__proto__ === Employee
+  John.tpAncestor === Employee   // John.__proto__ === Employee
 
 There is no mystical "prototype", which exists implicitly and {replacement of which can break object relationship at all}[http://joost.zeekat.nl/constructors-considered-mildly-confusing.html].
 

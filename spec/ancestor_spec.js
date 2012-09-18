@@ -20,6 +20,12 @@ describeProperty("tpAncestor", function() {
         expect(objectCreatedByLiteral[_property_]).toBe(Object.prototype);
       });
     });
+    
+    describe("should be null", function(){
+      it("on the Object.prototype (the root of any hierarchy)", function(){
+        expect(Object.prototype[_property_]).toBeNull();
+      });
+    });
 
   });
 
@@ -32,19 +38,26 @@ describeProperty("tpAncestors", function() {
   describe("Should return an array of all ancestors, ordered by nearness (first element is the nearest ancestor)", function(){
 
     it("when the object has been created with 'derive' method", function(){
-      expect(Serg[_property_]).toEqual([Employee, Person, Object.prototype]);
+      expect(Serg.tpAncestors).toEqual([Employee, Person, Object.prototype]);
     });
 
     describe("when the object has been created traditionally", function(){
       it("with 'new' operator", function(){
-        expect(objectCreatedByFunction[_property_]).toEqual([Number.prototype, Object.prototype]);
+        expect(objectCreatedByFunction.tpAncestors).toEqual([Number.prototype, Object.prototype]);
       });
-
+    
       it("with object literal", function(){
-        expect(objectCreatedByLiteral[_property_]).toEqual([Object.prototype]);
+        expect(objectCreatedByLiteral.tpAncestors).toEqual([Object.prototype]);
       });
     });
 
+  });
+  
+  describe("should be empty", function(){
+    it("on the Object.prototype (the root of any hierarchy)", function(){
+      expect(Object.prototype[_property_]).toEqual(jasmine.any(Array));
+      expect(Object.prototype[_property_].length).toEqual(0);
+    });
   });
 
 });
