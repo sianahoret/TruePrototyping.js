@@ -7,23 +7,23 @@ describeProperty("tpAncestor", function() {
       it("to the object which 'derive' was called on", function(){
         var Person = {};
         var Serg = Person.tpDerive();
-        expect(Serg[_property_]).toBe(Person);
+        expect(Serg.tpAncestor).toBe(Person);
       });
     });
 
     describe("when the object has been created traditionally", function(){
       it("with 'new' operator - to the [Function-constructor].prototype", function(){
-        expect(objectCreatedByFunction[_property_]).toBe(Number.prototype);
+        expect(objectCreatedByFunction.tpAncestor).toBe(Number.prototype);
       });
 
       it("with object literal - to the Object.prototype", function(){
-        expect(objectCreatedByLiteral[_property_]).toBe(Object.prototype);
+        expect(objectCreatedByLiteral.tpAncestor).toBe(Object.prototype);
       });
     });
     
     describe("should be null", function(){
       it("on the Object.prototype (the root of any hierarchy)", function(){
-        expect(Object.prototype[_property_]).toBeNull();
+        expect(Object.prototype.tpAncestor).toBeNull();
       });
     });
 
@@ -55,8 +55,8 @@ describeProperty("tpAncestors", function() {
   
   describe("should be empty", function(){
     it("on the Object.prototype (the root of any hierarchy)", function(){
-      expect(Object.prototype[_property_]).toEqual(jasmine.any(Array));
-      expect(Object.prototype[_property_].length).toEqual(0);
+      expect(Object.prototype.tpAncestors).toEqual(jasmine.any(Array));
+      expect(Object.prototype.tpAncestors.length).toEqual(0);
     });
   });
 
@@ -70,28 +70,28 @@ describeProperty("tpIsAncestorOf", function() {
 
     describe("has been created with 'derive' method", function(){
       it("the respondent object is the immediate ancestor", function(){
-        expect(Employee[_property_](Serg)).toBeTruthy();
+        expect(Employee.tpIsAncestorOf(Serg)).toBeTruthy();
       });
 
       it("the respondent object is a far ancestor", function(){
-        expect(Person[_property_](Serg)).toBeTruthy();
+        expect(Person.tpIsAncestorOf(Serg)).toBeTruthy();
       });
     });
 
     describe("has been created traditionally", function(){
       describe("with 'new' operator", function(){
         it("the respondent object is the immediate ancestor (that is [Function-constructor].prototype)", function(){
-          expect(Number.prototype[_property_](objectCreatedByFunction)).toBeTruthy();
+          expect(Number.prototype.tpIsAncestorOf(objectCreatedByFunction)).toBeTruthy();
         });
 
         it("the respondent object is a far ancestor (that is Object.prototype)", function(){
-          expect(Object.prototype[_property_](objectCreatedByFunction)).toBeTruthy();
+          expect(Object.prototype.tpIsAncestorOf(objectCreatedByFunction)).toBeTruthy();
         });
       });
 
       describe("with object literal", function(){
         it("the respondent object is the sole ancestor (that is Object.prototype)", function(){
-          expect(Object.prototype[_property_](objectCreatedByLiteral)).toBeTruthy();
+          expect(Object.prototype.tpIsAncestorOf(objectCreatedByLiteral)).toBeTruthy();
         });
       });
     });
@@ -107,28 +107,28 @@ describeProperty("tpIsDescendantOf", function() {
 
     describe("has been created with 'derive' method", function(){
       it("and the passed object is its immediate ancestor", function(){
-        expect(Serg[_property_](Employee)).toBeTruthy();
+        expect(Serg.tpIsDescendantOf(Employee)).toBeTruthy();
       });
 
       it("and the passed object is its far ancestor", function(){
-        expect(Serg[_property_](Person)).toBeTruthy();
+        expect(Serg.tpIsDescendantOf(Person)).toBeTruthy();
       });
     });
 
     describe("has been created traditionally", function(){
       describe("with 'new' operator", function(){
         it("and the passed object is its immediate ancestor (that is [Function-constructor].prototype)", function(){
-          expect(objectCreatedByFunction[_property_](Number.prototype)).toBeTruthy();
+          expect(objectCreatedByFunction.tpIsDescendantOf(Number.prototype)).toBeTruthy();
         });
 
         it("and the passed object is its far ancestor (that is Object.prototype)", function(){
-          expect(objectCreatedByFunction[_property_](Object.prototype)).toBeTruthy();
+          expect(objectCreatedByFunction.tpIsDescendantOf(Object.prototype)).toBeTruthy();
         });
       });
 
       describe("with object literal", function(){
         it("and the respondent object is its sole ancestor (that is Object.prototype)", function(){
-          expect(objectCreatedByLiteral[_property_](Object.prototype)).toBeTruthy();
+          expect(objectCreatedByLiteral.tpIsDescendantOf(Object.prototype)).toBeTruthy();
         });
       });
     });

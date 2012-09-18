@@ -27,8 +27,8 @@
 
     MyModel = new JS.Class(BaseModel, {
       url: function(){
-        return this.tpAncestor.tpSuper('url') + '/somethingExtra';        // approach 1
-        // return MyModel.prototype.tpSuper('url') + '/somethingExtra';   // approach 2
+        return this.tpAncestor.tpSuperImmediate('url') + '/somethingExtra';        // approach 1
+        // return MyModel.prototype.tpSuperImmediate('url') + '/somethingExtra';   // approach 2
       }
     });
 

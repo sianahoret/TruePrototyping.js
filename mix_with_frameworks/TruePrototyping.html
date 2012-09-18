@@ -24,8 +24,8 @@
 
     MyModel = BaseModel.tpDerive({
       url: function(){
-        return this.tpAncestor.tpSuper('url') + '/somethingExtra';      // approach 1
-        // return MyModel.tpSuper('url') + '/somethingExtra';           // approach 2
+        return this.tpAncestor.tpSuperImmediate('url') + '/somethingExtra';      // approach 1
+        // return MyModel.tpSuperImmediate('url') + '/somethingExtra';           // approach 2
                           // note, that tpSuper is called immediately on MyModel, not on MyModel.prototype as in examples above
       }
     });

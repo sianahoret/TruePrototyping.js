@@ -24,8 +24,8 @@
 
     class MyModel extends BaseModel
       url: ->
-        @.tpAncestor.tpSuper('url') + '/somethingExtra'               # approach 1
-        #MyModel::.tpSuper('url') + '/somethingExtra';                # approach 2
+        @.tpAncestor.tpSuperImmediate('url') + '/somethingExtra'               # approach 1
+        #MyModel::.tpSuperImmediate('url') + '/somethingExtra';                # approach 2
 
     myInstance = new MyModel
   </pre>

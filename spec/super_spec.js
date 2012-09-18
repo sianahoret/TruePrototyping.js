@@ -2,8 +2,6 @@ describeProperty("tpSuper", function() {
   shouldBeDefinedOnAnyObject();
 
   describe("Should call on 'this' object the nearest (among ancestors) different implementation of the method", function(){
-    var Person;
-    var john;
     beforeEach(function(){
       Person = {
         fullName: function(){
@@ -53,8 +51,6 @@ describeProperty("tpSuperImmediate", function() {
   shouldBeDefinedOnAnyObject();
 
   describe("Should call on 'this' object the immediate ancestor's implementation of the specified method", function(){
-    var Person;
-    var john;
     beforeEach(function(){
       Person = {
         fullName: function(){
