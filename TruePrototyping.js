@@ -9,14 +9,15 @@
   
   var init = function(){
     
-    var _prefix         = TruePrototyping.prefix || 'tp';
-    var _derive         = _prefix + "Derive";
-    var _ancestor       = _prefix + "Ancestor";
-    var _ancestors      = _prefix + "Ancestors";
-    var _isAncestorOf   = _prefix + "IsAncestorOf";
-    var _isDescendantOf = _prefix + "IsDescendantOf";
-    var _super          = _prefix + "Super";
-    var _superImmediate = _prefix + "SuperImmediate";
+    var _prefix               = TruePrototyping.prefix || 'tp';
+    var _derive               = _prefix + "Derive";
+    var _ancestor             = _prefix + "Ancestor";
+    var _ancestors            = _prefix + "Ancestors";
+    var _isAncestorOf         = _prefix + "IsAncestorOf";
+    var _isDescendantOf       = _prefix + "IsDescendantOf";
+    var _super                = _prefix + "Super";
+    var _superImmediate       = _prefix + "SuperImmediate";
+    var _superDependentValue  = _prefix + "SuperDependentValue";
 
     /** Derive
     This is a syntactical sugar over ES5 Object.create.
@@ -81,6 +82,20 @@
       }
     });
     
+    // A few 'private' functions (just to remove duplication, they are not needed outside)
+    var incrementSuperDepth = function(obj){
+      obj.superDepth ? (obj.superDepth += 1) : (obj.superDepth = 1);
+    };
+    var decrementSuperDepth = function(obj){
+      obj.superDepth ? (obj.superDepth += 1) : (obj.superDepth = 1);
+    };
+    var getNextSuperOwner = function(obj){
+      obj.methodOwner = obj.methodOwner ? obj.methodOwner[_ancestor] : obj[_ancestor];
+    };
+    var clearSuperOwner = function(obj){
+      delete this.methodOwner;
+    };
+    
     /** Super
     This is a short way to call on 'this' object the nearest (amoung ancestors) different implementation of the specified method (true super).
     */
@@ -95,18 +110,20 @@
         
         // this.methodOwner is introduced to prevent cyclic call of the same implementation of methodName
         // in case of recursion (if this.tpSuper() call is encountered inside a base implementation).
-        this.methodOwner = this.methodOwner ? this.methodOwner[_ancestor] : this[_ancestor];
+        getNextSuperOwner(this);
         
-        while(this.methodOwner){
+        while(this.methodOwner){ // look for ancestor having different implementation
           if(this.methodOwner.hasOwnProperty(methodName) && (this.methodOwner[methodName] != this[methodName])){
-            res = this.methodOwner[methodName].apply(this, args);  
-          }
-          if(this.methodOwner){ // the value has not become undefined in resursion 
-            this.methodOwner = this.methodOwner[_ancestor];
+            incrementSuperDepth(this);
+            res = this.methodOwner[methodName].apply(this, args);
+            break;  
+          } else {
+            getNextSuperOwner(this);
           }
         }
         
-        delete this.methodOwner; // possible recursion is completed, forget about it
+        decrementSuperDepth(this);
+        clearSuperOwner(this); // possible recursion is completed, forget about it
         return res; // will return undefined, unless this.methodOwner[methodName] was called, what is intended
       }
     });
@@ -125,14 +142,24 @@
         
         // this.methodOwner is introduced to prevent cyclic call of the same implementation of methodName
         // in case of recursion (if this.tpSuper() call is encountered inside a base implementation).
-        this.methodOwner = this.methodOwner ? this.methodOwner[_ancestor] : this[_ancestor];
+        getNextSuperOwner(this);
         
         if(this.methodOwner && this.methodOwner[methodName]){
+          this.superDepth ? (this.superDepth += 1) : (this.superDepth = 1);
           res = this.methodOwner[methodName].apply(this, args); // here recursion is possible
         }
         
-        delete this.methodOwner; // possible recursion is completed, forget about it
+        this.superDepth ? (this.superDepth -= 1) : (delete this.superDepth);
+        clearSuperOwner(this); // possible recursion is completed, forget about it
         return res; // will return undefined, unless this.methodOwner[methodName] was called, what is intended
+      }
+    });
+    
+    Object.defineProperty(Object.prototype, _superDependentValue, {
+      enumerable: false,
+      configurable: true,
+      value: function(outOfRecursionValue, inRecursionValue){
+        return this.superDepth ? inRecursionValue : outOfRecursionValue;
       }
     });
 
