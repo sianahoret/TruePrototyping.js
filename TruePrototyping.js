@@ -87,13 +87,13 @@
       obj.superDepth ? (obj.superDepth += 1) : (obj.superDepth = 1);
     };
     var decrementSuperDepth = function(obj){
-      obj.superDepth ? (obj.superDepth += 1) : (obj.superDepth = 1);
+      obj.superDepth ? (obj.superDepth -= 1) : (delete obj.superDepth);
     };
     var getNextSuperOwner = function(obj){
       obj.methodOwner = obj.methodOwner ? obj.methodOwner[_ancestor] : obj[_ancestor];
     };
     var clearSuperOwner = function(obj){
-      delete this.methodOwner;
+      delete obj.methodOwner;
     };
     
     /** Super
@@ -145,11 +145,11 @@
         getNextSuperOwner(this);
         
         if(this.methodOwner && this.methodOwner[methodName]){
-          this.superDepth ? (this.superDepth += 1) : (this.superDepth = 1);
+          incrementSuperDepth(this);
           res = this.methodOwner[methodName].apply(this, args); // here recursion is possible
         }
         
-        this.superDepth ? (this.superDepth -= 1) : (delete this.superDepth);
+        decrementSuperDepth(this);
         clearSuperOwner(this); // possible recursion is completed, forget about it
         return res; // will return undefined, unless this.methodOwner[methodName] was called, what is intended
       }

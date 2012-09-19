@@ -7,7 +7,7 @@
 
   <script type="text/javascript" src="js/jquery.js"></script>
   <script type="text/javascript" src="js/mix_test.js"></script>
-  <script type="text/javascript" src="../TruePrototyping.min.js"></script>
+  <script type="text/javascript" src="../TruePrototyping.js"></script>
 
   <link type="text/css" rel="stylesheet" href="css/mix_test.css"/>
 
@@ -17,31 +17,31 @@
   <h2>With <a href="https://github.com/sianahoret/TruePrototyping.js" target="_blank">TruePrototyping</a> (own) inheritance model</h2>
   <pre class="runnable">
     BaseModel = {                                                       // this object shouldn't be a Function, as in examples above
-        url: function(){
-          return '/users/ID';
-        }
+      url: function(){
+        return '/user';
+      }
     };
 
     MyModel = BaseModel.tpDerive({
       url: function(){
-        return this.tpAncestor.tpSuperImmediate('url') + '/somethingExtra';      // approach 1
-        // return MyModel.tpSuperImmediate('url') + '/somethingExtra';           // approach 2
-                          // note, that tpSuper is called immediately on MyModel, not on MyModel.prototype as in examples above
+        return this.tpSuper('url') + '/' + this.id;                                                         // approach#1
+        //return '/level' + this.tpSuperImmediate('url') + this.tpSuperDependentValue('/' + this.id, '');   // approach#2
       }
     });
 
-    myInstance = MyModel.tpDerive();                                    // 'new' operator is not needed, as in examples above
+    myInstance = MyModel.tpDerive({ id: 1 });                           // 'new' operator is not needed, as in examples above
   </pre>
 
   <p>Inherited method (implemented with 'tpAncestor' and 'tpSuper'):</p>
   <pre class="runnable">
     // on the first level of inheritance chain
-    alert(myInstance.url());                                            // "/users/ID/somethingExtra" with both approaches
+    alert(myInstance.url());                                            // with approach#1: "/user/1"
+                                                                        // with approach#2: "/level/level/user/1"
 
     // on the second level of inheritance chain
-    myInstance2 = myInstance.tpDerive();
-    alert(myInstance2.url());                                           // with approach#1: "/users/ID/somethingExtra/somethingExtra" 
-                                                                        // with approach#2: "/users/ID/somethingExtra" 
+    myInstance2 = myInstance.tpDerive({ id: 2 });
+    alert(myInstance2.url());                                           // with approach#1: "/user/2"
+                                                                        // with approach#2: "/level/level/level/user/2"
   </pre>
 
   <p>tpAncestor:</p>
