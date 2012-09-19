@@ -16,30 +16,49 @@ Javascript is a propotype-based language. From the statement it could be expecte
 Sure javascript uses prototypes for inheritance. But traditional inheritance model in javascript mimics classical OOP instead of to be {True Prototypal Inheritance}[http://en.wikipedia.org/wiki/Prototype-based_programming]. Using functions as object constructors with "new" operator and excurrent implementation of "prototype" and "constructor" properties, "typeof" and "instanceof" operators makes a program more complex and confusing than it can be.
 
 To better realize what I mean you can visit these links:
-* {"Prototypal Inheritance in JavaScript" by Douglas Crockford}[http://javascript.crockford.com/prototypal.html]. Just a sentence from there: "JavaScript itself is conflicted about its prototypal nature".
+* {"Prototypal Inheritance in JavaScript" by Douglas Crockford}[http://javascript.crockford.com/prototypal.html]. A quote from there: "JavaScript's constructor pattern obscured JavaScript's true prototypal nature".
 * {Confusion with "constructor" property}[http://joost.zeekat.nl/constructors-considered-mildly-confusing.html]
 
 
 === Ways of using true prototypal inheritance style in javascript
 
-True prototypal inheritance style in javascript is possible for long time with using non-standard {__proto__}[https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Object/proto] property. Since {ECMAScript 5th Edition}[http://ecma-international.org/ecma-262/5.1/#sec-15.2.3.5] (JavaScript 1.8.5) there is a standard way for true prototypal inheritance style - Object.create and a few related methods.
+True prototypal inheritance style in javascript is possible for long time with using non-standard {__proto__}[https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Object/proto] property. Since {ECMAScript 5th Edition}[http://ecma-international.org/ecma-262/5.1/#sec-15.2.3.5] (JavaScript 1.8.5) there is a standard way - Object.create and a few related methods.
 
-So the idea is not new. A couple of links:
+A couple of links:
 * {Demonstration of the true style by Tim Caswell, a Node.js developer}[http://howtonode.org/prototypical-inheritance]
 * {My article (in Russian)}[http://innerbytes.net/proto/javascript/clear_prototipal_inheritance.htm]
 
-Actually I am upset by most of popular javascript libraries and frameworks not only use the "traditional" style, but even enhance imitation of Classical OOP with class-like APIs, while I do not know a library which follows the true prototypal inheritance style. I guess why it is so (see Caution section below), but I assume the "true style" deserves to be more used than it is at nowadays.
+So the idea is not new. What do I try to achieve with the TruePrototyping library? Actually I am upset by most of popular javascript libraries and frameworks not only use the "traditional" constructor-driven inheritance model, but even enhance imitation of Classical OOP with class-like APIs, while I do not know a library which follows the true prototypal inheritance style. I guess the "true style" deserves to be more used than it is at nowadays.
 
 
 === Brief overview of TruePrototyping.js library
 
-Aims of the library and corresponding stuff:
+The library patches all objects (via Object.prototype) with a few properties and methods.
 
-<b>Aim</b> :: <b>Stuff to achieve the aim</b>
-A compact syntax for construction of object hierarchy with intuitively clear object relationship :: *tpDerive* method
-A convenient and uniform way for introspection and lookup of true prototype chain, even if object hierarchy was created with "traditional" style :: *tpAncestor* and *tpAncestors* properties, *tpSuper*, *tpIsAncestorOf* and *tpIsDescendantOf* methods
+A stuff providing a compact syntax for construction of object hierarchy with intuitively clear object relationship:
 
-=== Creation of object hierarchy with 'tpDerive' method
+***Stuff***       :: ***Description***
+*tpDerive* method :: Creates and returns a new object, immediately derived   from the object which the method is called on.
+
+A stuff providing a convenient and uniform way for introspection and lookup of true prototype chain, even if object hierarchy was created with "traditional" style:
+
+***Stuff***           :: ***Description***
+*tpAncestor* property                               :: Returns the immediate ancestor of the object which the property is called on.
+*tpAncestors* property                              :: Returns array of all ancestors of the object which the property is called on. 
+*tpSuper*(methodName, methodArgs) method            :: Calls the nearest base implementation of the specified (with the first parameter) method on the object which the method is called on. The rest of passed parameters (methodArgs) are transmitted to the call.
+*tpSuperImmediate*(methodName, methodArgs) method   :: Unlike tpSuper, calls the immediate ancestor's implementation of the specified (with the first parameter) method on the object which the method is called on, even if the immediate ancestor's implementation does not differ from implementation this object has.
+*tpIsAncestorOf*(descendantContender) method        :: Returns true, if the object which the method is called on is an ancestor (through any number of levels) of the descendantContender object, otherwise false.
+*tpIsDescendantOf*(ancestorContender) method        :: Returns true, if the object which the method is called on is an descendant (through any number of levels) of the ancestorContender object, otherwise false.
+
+The 'tp' prefix (abbreviation of "true prototyping") is used to eliminate possibility of name conflicts with other libraries and frameworks or just to match to your naming preferences. The prefix can be changed with the following code just after TruePrototyping.js is interpreted:
+
+  TruePrototyping.usePrefix('_'); // underscore will be used instead of 'tp'
+
+=== What you need to start using TruePrototyping library
+
+For using the library you only have to download either <b>TruePrototyping.js or TruePrototyping.min.js</b> file and to include it into your program (web page etc.).
+
+=== Example of use: Creation of object hierarchy with 'tpDerive' method
 
 After you include the TruePrototyping.js into your program, any javascript object has 'tpDerive' method and you can construct inheritance chain in the following way:
 
@@ -101,10 +120,9 @@ myInstance object won't act as expected for an instance of Backbone.Model, becau
 
 === Use for lookup of object hierarchies have been build with different frameworks
 
-Frameworks which provides APIs for constructing object hierarchy (most of them simulate classical inheritance) in different ways provide the feature of referencing to an ancestor object (up through the hierarchy), well known as "super"-reference. Sometimes the feature is provided explicitly; sometimes the feature is there, but is not documented (and looks like inner __super__ method); sometimes the feature is just absent.
+Frameworks which provides APIs for constructing object hierarchy (most of them simulate classical inheritance) in different ways provide the feature of <i>referencing to an ancestor object</i> (up through the hierarchy), well known as "super"-reference or "super"-call for a method. Sometimes the feature is provided explicitly; sometimes the feature is there, but is not documented (and looks like inner __super__ method); sometimes the feature is just absent.
 
-TruePrototyping library provides a few properties and methods, which allow to walk through true prototype chain: 'tpAncestor' and 'tpAncestors' properties, 'tpSuper', 'tpIsAncestorOf' and 'tpIsDescendantOf' methods. Moreover, it allows to do that in the same way for object hierarchies created by different frameworks.
-
+TruePrototyping library provides a few properties and methods, which allow to walk through true prototype chain: 'tpAncestor' and 'tpAncestors' properties, 'tpSuper', 'tpIsAncestorOf' and 'tpIsDescendantOf' methods. Moreover, it allows to do that in the same way for object hierarchies created by different frameworks. You can see examples in mix_with_frameworks directory.
 
 === What you can look and try just now
 
