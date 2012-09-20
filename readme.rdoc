@@ -45,10 +45,11 @@ A stuff providing a convenient and uniform way for introspection and lookup of t
 ***Stuff***           :: ***Description***
 *tpAncestor* property                               :: Returns the immediate ancestor of the object which the property is called on.
 *tpAncestors* property                              :: Returns array of all ancestors of the object which the property is called on. 
-*tpSuper*(methodName, methodArgs) method            :: Calls the nearest base implementation of the specified (with the first parameter) method on the object which the method is called on. The rest of passed parameters (methodArgs) are transmitted to the call.
-*tpSuperImmediate*(methodName, methodArgs) method   :: Unlike tpSuper, calls the immediate ancestor's implementation of the specified (with the first parameter) method on the object which the method is called on, even if the immediate ancestor's implementation does not differ from implementation this object has.
 *tpIsAncestorOf*(descendantContender) method        :: Returns true, if the object which the method is called on is an ancestor (through any number of levels) of the descendantContender object, otherwise false.
 *tpIsDescendantOf*(ancestorContender) method        :: Returns true, if the object which the method is called on is an descendant (through any number of levels) of the ancestorContender object, otherwise false.
+*tpSuper*(methodName, methodArgs) method            :: Calls on the object which the method is called on the nearest base implementation of the methodName method which differs from the implementation this object has. The rest of passed parameters (methodArgs) are transmitted to the call.
+*tpSuperImmediate*(methodName, methodArgs) method   :: Similar to tpSuper, but unlike it calls the immediate ancestor's implementation of methodName, even if the immediate ancestor's implementation does not differ from the implementation this object has.
+*tpDependingOnSuperLevel*(outOfRecursionValue, inRecursionValue) method :: Returns outOfRecursionValue, being called quite out or at the first level of super recursion. Returns inRecursionValue, being called inside super recursion (on any level more than the first one).
 
 The 'tp' prefix (abbreviation of "true prototyping") is used to eliminate possibility of name conflicts with other libraries and frameworks or just to match to your naming preferences. The prefix can be changed with the following code just after TruePrototyping.js is interpreted:
 
@@ -135,7 +136,6 @@ Additionally to the library itself (TruePrototyping.js file) this repository con
 
 === TODO
 
-* Make specs and description of tpDependingOnSuperLevel method.
 * Make tpSuper and tpSuperImmediate suitable for properties (not functions) as well as for methods (functions).
 * Add ability to provide 'initialize' method inside the second parameter of tpDerive. If initialize is passed, it will be called just after new object creation.
 * Implementation for an environment which is not {ES5-compliant}[http://kangax.github.com/es5-compat-table/]. For now I am not sure it is actually needed.

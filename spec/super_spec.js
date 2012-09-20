@@ -114,5 +114,51 @@ describeProperty("tpSuperImmediate", function() {
   });
 });
 
+describeProperty("tpDependingOnSuperLevel", function() {
+  shouldBeDefinedOnAnyObject();
 
+  describe("Should return one of two received arguments:", function(){
+    
+    beforeEach(function(){
+      Person = {
+        whoIs: function(){
+          return "Person" + this.commaOrDot();
+        },
+        commaOrDot: function(){
+          return this.tpDependingOnSuperLevel('.', ', ');
+        }
+      };
+      
+      Englishman = Person.tpDerive({
+        whoIs: function(){
+          return this.tpSuperImmediate('whoIs') + "Englishman" + this.commaOrDot();
+        }
+      });
+
+      john = Englishman.tpDerive({ 
+        whoIs: function(){ 
+          return this.tpSuper('whoIs') + "John" + this.commaOrDot();
+        } 
+      });
+    });
+
+    describe("the first argument", function(){
+      it("outside of super recursion", function(){
+        expect(john.tpDependingOnSuperLevel('foo', 222)).toEqual('foo');
+      });
+
+      it("on the first level of super recursion ", function(){
+        expect(john.tpDependingOnSuperLevel('foo', 222)).toEqual('foo');
+      });
+    });
+    
+    describe("the second argument", function(){
+      it("inside super recursion (on any level more than first)", function(){
+        expect(john.whoIs()).toEqual('Person, Englishman, John.');
+      });
+    });
+
+
+  });
+});
 

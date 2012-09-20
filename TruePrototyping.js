@@ -9,14 +9,14 @@
   
   var init = function(){
     
-    var _prefix               = TruePrototyping.prefix || 'tp';
-    var _derive               = _prefix + "Derive";
-    var _ancestor             = _prefix + "Ancestor";
-    var _ancestors            = _prefix + "Ancestors";
-    var _isAncestorOf         = _prefix + "IsAncestorOf";
-    var _isDescendantOf       = _prefix + "IsDescendantOf";
-    var _super                = _prefix + "Super";
-    var _superImmediate       = _prefix + "SuperImmediate";
+    var _prefix                 = TruePrototyping.prefix || 'tp';
+    var _derive                 = _prefix + "Derive";
+    var _ancestor               = _prefix + "Ancestor";
+    var _ancestors              = _prefix + "Ancestors";
+    var _isAncestorOf           = _prefix + "IsAncestorOf";
+    var _isDescendantOf         = _prefix + "IsDescendantOf";
+    var _super                  = _prefix + "Super";
+    var _superImmediate         = _prefix + "SuperImmediate";
     var _dependingOnSuperLevel  = _prefix + "DependingOnSuperLevel";
 
     /** Derive
