@@ -17,7 +17,7 @@
     var _isDescendantOf       = _prefix + "IsDescendantOf";
     var _super                = _prefix + "Super";
     var _superImmediate       = _prefix + "SuperImmediate";
-    var _superDependentValue  = _prefix + "SuperDependentValue";
+    var _dependingOnSuperLevel  = _prefix + "DependingOnSuperLevel";
 
     /** Derive
     This is a syntactical sugar over ES5 Object.create.
@@ -155,7 +155,7 @@
       }
     });
     
-    Object.defineProperty(Object.prototype, _superDependentValue, {
+    Object.defineProperty(Object.prototype, _dependingOnSuperLevel, {
       enumerable: false,
       configurable: true,
       value: function(outOfRecursionValue, inRecursionValue){

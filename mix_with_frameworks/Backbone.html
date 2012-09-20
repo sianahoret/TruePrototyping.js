@@ -4,15 +4,14 @@
 
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+  
+  <link type="text/css" rel="stylesheet" href="css/mix_test.css"/>
 
   <script type="text/javascript" src="js/jquery.js"></script>
-  <script type="text/javascript" src="js/mix_test.js"></script>
-  <script type="text/javascript" src="../TruePrototyping.min.js"></script>
-
   <script type="text/javascript" src="js/underscore.js"></script>
   <script type="text/javascript" src="js/backbone.js"></script>
-
-  <link type="text/css" rel="stylesheet" href="css/mix_test.css"/>
+  <script type="text/javascript" src="../TruePrototyping.min.js"></script>
+  <script type="text/javascript" src="js/mix_test.js"></script>
 
 </head>
 <body>
@@ -21,29 +20,28 @@
   <pre class="runnable">
     MyModel = Backbone.Model.extend({
       urlRoot : '/users',
-
-      id: "ID",
-
+      
       url: function(){
-        return this.tpAncestor.tpSuperImmediate('url') + '/somethingExtra';        // approach 1
-        // return MyModel.prototype.tpSuperImmediate('url') + '/somethingExtra';   // approach 2
+        // Backbone's url method appends id to urlRoot, so I do not need to do it, as in other examples
+        return this.tpSuper('url');                                       // approach#1
+        //return '/level' + this.tpSuperImmediate('url');                 // approach#2
       }
     });
 
-    myInstance = new MyModel();
+    myInstance = new MyModel({ id: 1 });
   </pre>
 
   <p>Inherited method (implemented with 'tpAncestor' and 'tpSuper'):</p>
   <pre class="runnable">
     // on the first level of inheritance chain
-    alert(myInstance.url());                                              // "/users/ID/somethingExtra" with both approaches
-
-    // on the second level of inheritance chain
-    MyModel2 = MyModel.extend({});
-    myInstance2 = new MyModel2();
-    alert(myInstance2.url());                                             // with approach#1: "/users/ID/somethingExtra/somethingExtra"
-                                                                          // with approach#2: "/users/ID/somethingExtra"
-  </pre>
+    alert(myInstance.url());                                              // with approach#1: "/users/1
+                                                                          // with approach#2: "/level/level/users/1"
+    // on the second level of inheritance chain                           
+    MyChildModel = MyModel.extend({});                                        
+    childInstance = new MyChildModel({ id: 2 });                                
+    alert(childInstance.url());                                           // with approach#1: "/users/2"
+                                                                          // with approach#2: "/level/level/level/users/2"
+  </pre>                                                                  
 
   <p>tpAncestor:</p>
   <pre class="runnable">

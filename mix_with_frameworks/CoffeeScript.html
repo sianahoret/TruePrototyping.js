@@ -4,43 +4,45 @@
 
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+  
+  <link type="text/css" rel="stylesheet" href="css/mix_test.css"/>
 
   <script type="text/javascript" src="js/jquery.js"></script>
-  <script type="text/javascript" src="js/mix_test.js"></script>
-  <script type="text/javascript" src="../TruePrototyping.min.js"></script>
-  
   <script type="text/javascript" src="js/coffee-script.js"></script>
+  <script type="text/javascript" src="../TruePrototyping.min.js"></script>
+  <script type="text/javascript" src="js/mix_test.js"></script>
   <script type="text/javascript">window.runExample = function(code){ eval(CoffeeScript.compile(code)) };</script>
-
-  <link type="text/css" rel="stylesheet" href="css/mix_test.css"/>
+  
 </head>
 <body>
 
   <h2>With <a href="http://coffeescript.org/#classes" target="_blank">CoffeeScript</a> inheritance model</h2>
   <pre class="runnable">
     class BaseModel
+      constructor: (id) ->
+        @id = id
       url: ->
-        '/users/ID';
+        '/users'
 
     class MyModel extends BaseModel
       url: ->
-        @.tpAncestor.tpSuperImmediate('url') + '/somethingExtra'               # approach 1
-        #MyModel::.tpSuperImmediate('url') + '/somethingExtra';                # approach 2
+        @tpSuper('url') + "/#{@id}"                                                      # approach#1
+        #'/level' + @tpSuperImmediate('url') + @tpDependingOnSuperLevel("/#{@id}", '')   # approach#2
 
-    myInstance = new MyModel
+    myInstance = new MyModel(1)
   </pre>
 
   <p>Inherited method (implemented with 'tpAncestor' and 'tpSuper'):</p>
   <pre class="runnable">
     # on the first level of inheritance chain
-    alert myInstance.url()                                            # "/users/ID/somethingExtra" with both approaches
-
-    # on the second level of inheritance chain
-    
-    class MyModel2 extends MyModel
-    myInstance2 = new MyModel2
-    alert myInstance2.url()                                           # with approach#1: "/users/ID/somethingExtra/somethingExtra" 
-                                                                      # with approach#2: "/users/ID/somethingExtra"
+    alert myInstance.url()                                            # with approach#1: "/users/1
+                                                                      # with approach#2: "/level/level/users/1"
+    # on the second level of inheritance chain                        
+                                                                      
+    class MyChildModel extends MyModel                                
+    childInstance = new MyChildModel(2)                               
+    alert childInstance.url()                                         # with approach#1: "/users/2"
+                                                                      # with approach#2: "/level/level/level/users/2"
   </pre>
 
   <p>tpAncestor:</p>

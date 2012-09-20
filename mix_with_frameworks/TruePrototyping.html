@@ -7,7 +7,7 @@
 
   <script type="text/javascript" src="js/jquery.js"></script>
   <script type="text/javascript" src="js/mix_test.js"></script>
-  <script type="text/javascript" src="../TruePrototyping.js"></script>
+  <script type="text/javascript" src="../TruePrototyping.min.js"></script>
 
   <link type="text/css" rel="stylesheet" href="css/mix_test.css"/>
 
@@ -18,14 +18,14 @@
   <pre class="runnable">
     BaseModel = {                                                       // this object shouldn't be a Function, as in examples above
       url: function(){
-        return '/user';
+        return '/users';
       }
     };
 
     MyModel = BaseModel.tpDerive({
       url: function(){
         return this.tpSuper('url') + '/' + this.id;                                                         // approach#1
-        //return '/level' + this.tpSuperImmediate('url') + this.tpSuperDependentValue('/' + this.id, '');   // approach#2
+        //return '/level' + this.tpSuperImmediate('url') + this.tpDependingOnSuperLevel('/' + this.id, '');   // approach#2
       }
     });
 
@@ -35,13 +35,13 @@
   <p>Inherited method (implemented with 'tpAncestor' and 'tpSuper'):</p>
   <pre class="runnable">
     // on the first level of inheritance chain
-    alert(myInstance.url());                                            // with approach#1: "/user/1"
-                                                                        // with approach#2: "/level/level/user/1"
+    alert(myInstance.url());                                            // with approach#1: "/users/1"
+                                                                        // with approach#2: "/level/level/users/1"
 
     // on the second level of inheritance chain
-    myInstance2 = myInstance.tpDerive({ id: 2 });
-    alert(myInstance2.url());                                           // with approach#1: "/user/2"
-                                                                        // with approach#2: "/level/level/level/user/2"
+    childInstance = myInstance.tpDerive({ id: 2 });
+    alert(childInstance.url());                                         // with approach#1: "/users/2"
+                                                                        // with approach#2: "/level/level/level/users/2"
   </pre>
 
   <p>tpAncestor:</p>

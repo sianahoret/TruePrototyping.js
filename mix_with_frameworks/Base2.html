@@ -4,46 +4,50 @@
 
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+  
+  <link type="text/css" rel="stylesheet" href="css/mix_test.css"/>
 
   <script type="text/javascript" src="js/jquery.js"></script>
-  <script type="text/javascript" src="js/mix_test.js"></script>
-  <script type="text/javascript" src="../TruePrototyping.min.js"></script>
-
   <script type='text/javascript' src='js/base2.js'></script>
+  <script type="text/javascript" src="../TruePrototyping.min.js"></script>
+  <script type="text/javascript" src="js/mix_test.js"></script>
 
-  <link type="text/css" rel="stylesheet" href="css/mix_test.css"/>
 </head>
 <body>
 
   <h2>With <a href="http://base2.googlecode.com/svn/version/1.0.2/doc/base2.html#/doc/!base2.Base" target="_blank">Base2</a> inheritance model</h2>
   <pre class="runnable">
     BaseModel = Base.extend({
+      constructor: function(id) {
+        this.id = id;
+      },
       url: function(){
-        return '/users/ID';
+        return '/users';
       }
     });
 
     MyModel = BaseModel.extend({
       url: function(){
-        return this.tpAncestor.tpSuperImmediate('url') + '/somethingExtra';        // approach 1
-        // return MyModel.prototype.tpSuperImmediate('url') + '/somethingExtra';   // approach 2
+        return this.tpSuper('url') + '/' + this.id;                                                         // approach#1
+        //return '/level' + this.tpSuperImmediate('url') + this.tpDependingOnSuperLevel('/' + this.id, '');   // approach#2
       }
     });
 
-    myInstance = new MyModel();
+    myInstance = new MyModel(1);
   </pre>
 
   <p>Inherited method (implemented with 'tpAncestor' and 'tpSuper'):</p>
   <pre class="runnable">
     // on the first level of inheritance chain
-    alert(myInstance.url());                                              // "/users/ID/somethingExtra" with both approaches
-
-    // on the second level of inheritance chain
-    MyModel2 = MyModel.extend();
-    myInstance2 = new MyModel2();
-    alert(myInstance2.url());                                             // with approach#1: "/users/ID/somethingExtra/somethingExtra" 
-                                                                          // with approach#2: "/users/ID/somethingExtra" 
-  </pre>
+    alert(myInstance.url());                                              // with approach#1: "/users/1
+                                                                          // with approach#2: "/level/level/users/1"
+    
+    // on the second level of inheritance chain                           
+    MyChildModel = MyModel.extend();                                          
+    childInstance = new MyChildModel(2);                                        
+    alert(childInstance.url());                                             // with approach#1: "/users/2"                                               
+                                                                          // with approach#2: "/level/level/level/users/2"
+  </pre>                                                                  
 
   <p>tpAncestor:</p>
   <pre class="runnable">

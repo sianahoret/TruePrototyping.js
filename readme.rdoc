@@ -130,12 +130,12 @@ Additionally to the library itself (TruePrototyping.js file) this repository con
 
 1. There are examples of using TruePrototyping library for lookup of object hierarchies created with Propotype, Mootools, JavascriptMVC, Backbone and TruePrototyping itself. If you open <b>mix_with_frameworks/all.html</b> file in any browser, you can review the code and try to run it.
 
-2. The library is tested with jasmine test framework. You can open <b>spec/spec.html</b> in any browser to see a result of all tests execution and you can review a source code of the tests in <b>spec/*.js</b> files.
+2. The library is tested with jasmine test framework. You can open <b>spec/all.html</b> in any browser to see a result of all tests execution and you can review a source code of the tests in <b>spec/*.js</b> files.
 
 
 === TODO
 
-* Make specs and description of tpSuperDependentValue method.
+* Make specs and description of tpDependingOnSuperLevel method.
 * Make tpSuper and tpSuperImmediate suitable for properties (not functions) as well as for methods (functions).
 * Add ability to provide 'initialize' method inside the second parameter of tpDerive. If initialize is passed, it will be called just after new object creation.
 * Implementation for an environment which is not {ES5-compliant}[http://kangax.github.com/es5-compat-table/]. For now I am not sure it is actually needed.
