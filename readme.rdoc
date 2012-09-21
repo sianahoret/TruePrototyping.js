@@ -2,12 +2,11 @@
 
 The javascript library which provides API for using True Prototypal Inheritance.
 
-
-
 === Slogan
 
 Stop thinking with "classes" and "instances" - think with true prototype chain, just a chain of delegation!
 
+!https://raw.github.com/sianahoret/TruePrototyping.js/master/mix_with_frameworks/images/true_prototyping.png!
 
 === Traditional javascript inheritance model is weird
 
