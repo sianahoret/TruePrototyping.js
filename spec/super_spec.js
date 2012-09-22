@@ -1,33 +1,34 @@
 describeProperty("tpSuper", function() {
   shouldBeDefinedOnAnyObject();
 
-  describe("Should call on 'this' object the nearest (among ancestors) different implementation of the method", function(){
+  beforeEach(function(){
+    Person = {
+      fullName: function(){
+        return "Person " + this.name + " " + this.surname;
+      },
+      health: 'middle'
+    };
     
-    beforeEach(function(){
-      Person = {
-        fullName: function(){
-          return "Person " + this.name + " " + this.surname;
-        }
-      };
-      
-      Englishman = Person.tpDerive({
-        fullName: function(){
-          return "Englishman " + this.tpSuper("fullName");
-        }
-      });
-
-      Musician = Englishman.tpDerive({
-        fullName: function(){
-          return "Musician " + this.tpSuper("fullName");
-        }
-      });
-      
-      john = Musician.tpDerive({
-        name: "John",
-        surname: "Lennon"
-      });
+    Englishman = Person.tpDerive({
+      fullName: function(){
+        return "Englishman " + this.tpSuper("fullName");
+      }
     });
 
+    Musician = Englishman.tpDerive({
+      fullName: function(){
+        return "Musician " + this.tpSuper(new String("fullName"));
+      }
+    });
+    
+    john = Musician.tpDerive({
+      name: "John",
+      surname: "Lennon",
+      health: 'great'
+    });
+  });
+
+  describe("Should call on 'this' object the nearest (among ancestors) different implementation of a method", function(){
     it("with the same name", function(){
       expect(john.fullName()).toEqual("Musician Englishman Person John Lennon");
     });
@@ -38,7 +39,6 @@ describeProperty("tpSuper", function() {
       };
       expect(john.greeting()).toEqual("Hello, I am Englishman Person John Lennon");
     });
-
   });
   
   describe("Should return undefined,", function(){
@@ -54,35 +54,50 @@ describeProperty("tpSuper", function() {
     it("if the method is not defined differently above in hierarchy", function(){
       expect(Person.tpSuper('toString')).toBeUndefined();
     });
+    
+    it("if the method is not defined differently above in hierarchy, even there is a property with appropriate name", function(){
+      expect(john.tpSuper('health')).toBeUndefined();
+    });
+  });
+  
+  describe("Should throw an exception,", function(){
+    it("if the method name is not specified", function(){
+      expect(function(){ Person.tpSuper() }).toThrow("Method name should be specified and it should be a string!");
+    });
+    
+    it("if the method name is not string", function(){
+      expect(function(){ Person.tpSuper(123) }).toThrow("Method name should be specified and it should be a string!");
+    });
   });
 });
 
 describeProperty("tpSuperImmediate", function() {
   shouldBeDefinedOnAnyObject();
 
-  describe("Should call on 'this' object the immediate ancestor's implementation of the specified method", function(){
+  beforeEach(function(){
+    Person = {
+      fullName: function(){
+        return "Person " + this.name + " " + this.surname;
+      },
+      health: 'middle'
+    };
     
-    beforeEach(function(){
-      Person = {
-        fullName: function(){
-          return "Person " + this.name + " " + this.surname;
-        }
-      };
-      
-      Englishman = Person.tpDerive({
-        fullName: function(){
-          return "Englishman " + this.tpSuperImmediate("fullName");
-        }
-      });
-
-      Musician = Englishman.tpDerive();
-      
-      john = Musician.tpDerive({
-        name: "John",
-        surname: "Lennon"
-      });
+    Englishman = Person.tpDerive({
+      fullName: function(){
+        return "Englishman " + this.tpSuperImmediate("fullName");
+      }
     });
 
+    Musician = Englishman.tpDerive();
+    
+    john = Musician.tpDerive({
+      name: "John",
+      surname: "Lennon",
+      health: 'great'
+    });
+  });
+
+  describe("Should call on 'this' object the immediate ancestor's implementation of the specified method", function(){
     it("with the same name", function(){
       expect(john.fullName()).toEqual("Englishman Englishman Englishman Person John Lennon");
     });
@@ -93,25 +108,39 @@ describeProperty("tpSuperImmediate", function() {
       };
       expect(john.greeting()).toEqual("Hello, I am Englishman Englishman Person John Lennon");
     });
-    
-    describe("Should return undefined,", function(){
-      it("if object does not have an ancestor", function(){
-        expect(Object.prototype.tpSuperImmediate('toString')).toBeUndefined();
-      });
-      
-      it("if the method is not defined above in hierarchy", function(){
-        john.age = function(){ return 25; }
-        expect(john.tpSuperImmediate("age")).toBeUndefined();
-      });
-    });
-    
-    describe("Should not return undefined,", function(){
-      it("if the method is not defined differently above in hierarchy", function(){
-        expect(Person.tpSuperImmediate('toString')).toBeDefined();
-      });
-    });
-
   });
+  
+  describe("Should return undefined,", function(){
+    it("if object does not have an ancestor", function(){
+      expect(Object.prototype.tpSuperImmediate('toString')).toBeUndefined();
+    });
+    
+    it("if the method is not defined above in hierarchy", function(){
+      john.age = function(){ return 25; }
+      expect(john.tpSuperImmediate("age")).toBeUndefined();
+    });
+  });
+  
+  describe("Should not return undefined,", function(){
+    it("if the method is not defined differently above in hierarchy", function(){
+      expect(Person.tpSuperImmediate('toString')).toBeDefined();
+    });
+    
+    it("if the method is not defined differently above in hierarchy, even there is a property with appropriate name", function(){
+      expect(john.tpSuperImmediate('health')).toBeUndefined();
+    });
+  });
+
+  describe("Should throw an exception,", function(){
+    it("if the method name is not specified", function(){
+      expect(function(){ Person.tpSuperImmediate() }).toThrow("Method name should be specified and it should be a string!");
+    });
+    
+    it("if the method name is not string", function(){
+      expect(function(){ Person.tpSuperImmediate(123) }).toThrow("Method name should be specified and it should be a string!");
+    });
+  });
+
 });
 
 describeProperty("tpDependingOnSuperLevel", function() {

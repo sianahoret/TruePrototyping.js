@@ -89,12 +89,15 @@
     var decrementSuperDepth = function(obj){
       obj.superDepth ? (obj.superDepth -= 1) : (delete obj.superDepth);
     };
-    var getNextSuperOwner = function(obj){
-      obj.methodOwner = obj.methodOwner ? obj.methodOwner[_ancestor] : obj[_ancestor];
+    var getNextPropOwner = function(obj){
+      obj.propOwner = obj.propOwner ? obj.propOwner[_ancestor] : obj[_ancestor];
     };
-    var clearSuperOwner = function(obj){
-      delete obj.methodOwner;
+    var clearPropOwner = function(obj){
+      delete obj.propOwner;
     };
+    var isString = function(obj){
+      return (typeof obj == "string") || (obj.constructor == String);
+    }
     
     /** Super
     This is a short way to call on 'this' object the nearest (amoung ancestors) different implementation of the specified method (true super).
@@ -102,29 +105,34 @@
     Object.defineProperty(Object.prototype, _super, {
       enumerable: false,
       configurable: true,
-      value: function(){ /* methodName, *methodArgs */
+      value: function(){ /* propName, *methodArgs */
+        if(!arguments.length || !isString(arguments[0])) { 
+          throw "Method name should be specified and it should be a string!";
+        } 
         var args = Array.prototype.slice.call(arguments);
-        var methodName = args.shift();
+        var propName = args.shift();
         
         var res;
         
-        // this.methodOwner is introduced to prevent cyclic call of the same implementation of methodName
+        // this.propOwner is introduced to prevent cyclic call of the same implementation of propName
         // in case of recursion (if this.tpSuper() call is encountered inside a base implementation).
-        getNextSuperOwner(this);
+        getNextPropOwner(this);
         
-        while(this.methodOwner){ // look for ancestor having different implementation
-          if(this.methodOwner.hasOwnProperty(methodName) && (this.methodOwner[methodName] != this[methodName])){
+        while(this.propOwner){ // look for ancestor having different implementation
+          if(this.propOwner.hasOwnProperty(propName) && (typeof this.propOwner[propName] == "function") 
+              && this.propOwner[propName] != this[propName]
+            ){
             incrementSuperDepth(this);
-            res = this.methodOwner[methodName].apply(this, args);
+            res = this.propOwner[propName].apply(this, args);
             break;  
           } else {
-            getNextSuperOwner(this);
+            getNextPropOwner(this);
           }
         }
         
         decrementSuperDepth(this);
-        clearSuperOwner(this); // possible recursion is completed, forget about it
-        return res; // will return undefined, unless this.methodOwner[methodName] was called, what is intended
+        clearPropOwner(this); // possible recursion is completed, forget about it
+        return res; // will return undefined, unless this.propOwner[propName] was called, what is intended
       }
     });
 
@@ -134,24 +142,27 @@
     Object.defineProperty(Object.prototype, _superImmediate, {
       enumerable: false,
       configurable: true,
-      value: function(){ /* methodName, *methodArgs */
+      value: function(){ /* propName, *methodArgs */
+        if(!arguments.length || !isString(arguments[0])) { 
+          throw "Method name should be specified and it should be a string!";
+        } 
         var args = Array.prototype.slice.call(arguments);
-        var methodName = args.shift();
+        var propName = args.shift();
 
         var res;
         
-        // this.methodOwner is introduced to prevent cyclic call of the same implementation of methodName
+        // this.propOwner is introduced to prevent cyclic call of the same implementation of propName
         // in case of recursion (if this.tpSuper() call is encountered inside a base implementation).
-        getNextSuperOwner(this);
+        getNextPropOwner(this);
         
-        if(this.methodOwner && this.methodOwner[methodName]){
+        if(this.propOwner && this.propOwner[propName] && (typeof this.propOwner[propName] == "function")){
           incrementSuperDepth(this);
-          res = this.methodOwner[methodName].apply(this, args); // here recursion is possible
+          res = this.propOwner[propName].apply(this, args); // here recursion is possible
         }
         
         decrementSuperDepth(this);
-        clearSuperOwner(this); // possible recursion is completed, forget about it
-        return res; // will return undefined, unless this.methodOwner[methodName] was called, what is intended
+        clearPropOwner(this); // possible recursion is completed, forget about it
+        return res; // will return undefined, unless this.propOwner[propName] was called, what is intended
       }
     });
     

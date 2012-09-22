@@ -148,7 +148,7 @@ Additionally to the library itself (TruePrototyping.js file) this repository con
 
 h3. TODO
 
-* Make tpSuper and tpSuperImmediate suitable for properties (not functions) as well as for methods (functions).
+* Make tpAncestorHaving(propertyName) and tpAncestorHavingDifferent(propertyName) methods which returns an ancestor having the specified property. These methods can be useful, when you need to find an ancestor by the logic like tpSuper/tpSuperImmediate currently have, but unlike in case of calling tpSuper/tpSuperImmediate you need to execute the specified property/method on its owner, not on 'this'. These methods, unlike tpSuper/tpSuperImmediate, can accept either method (function) or property (not function) name. The only problem is that the logic of tpAncestorHavingDifferent is unclear for property (not fuction), perhaps for such property tpAncestorHaving and ttpAncestorHavingDifferent will work equally :(.
 * Add ability to provide 'initialize' method inside the second parameter of tpDerive. If initialize is passed, it will be called just after new object creation.
 * Implementation for an environment which is not "ES5-compliant":http://kangax.github.com/es5-compat-table/. For now I am not sure it is actually needed.
 * ? Maybe it makes sense to implement "tpSuper" without necessity to pass ancestor's method name as a first argument. Benefit of the current implementation is only that it is very simple and, at the same time, allows calling any ancestor's method, not the exactly "super" in traditional meaning.
