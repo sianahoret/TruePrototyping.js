@@ -59,7 +59,7 @@ For using the library you only have to download either <b>TruePrototyping.js or 
 
 h3. Example of use: Creation of object hierarchy with 'tpDerive' method
 
-After you include the TruePrototyping.js into your program, any javascript object has 'tpDerive' method and you can construct inheritance chain in the following way:
+After you include the TruePrototyping.js into your program, any javascript object has 'tpDerive' method and you can construct inheritance tree in the following way:
 
 <pre>
 Person = {
@@ -79,12 +79,9 @@ Serg = Employee.tpDerive({
 });
 </pre>
 
-<b>Behind the scene, as well as on the scene, there is a chain of delegation containing only the objects you've defined</b> and nothing more:
+<b>Behind the scene there is nothing except of what on the scene - only the objects you've explicitly defined:</b>
 
-<pre>
-Employee.tpAncestor === Person // Employee.__proto__ === Person
-John.tpAncestor === Employee   // John.__proto__ === Employee
-</pre>
+!https://raw.github.com/sianahoret/TruePrototyping.js/master/mix_with_frameworks/images/example_of_hierarchy.png!
 
 There is no mystical "prototype", which exists implicitly and "replacement of which can break object relationship at all":http://joost.zeekat.nl/constructors-considered-mildly-confusing.html.
 
