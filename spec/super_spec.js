@@ -187,7 +187,6 @@ describeProperty("tpDependingOnSuperLevel", function() {
       });
     });
 
-
   });
 });
 

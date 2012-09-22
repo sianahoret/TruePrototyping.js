@@ -135,3 +135,33 @@ describeProperty("tpIsDescendantOf", function() {
 
   });
 });
+
+describeProperty("tpAncestorHaving", function() {
+  shouldBeDefinedOnAnyObject();
+  
+  describe("Should return the nearest ancestor, which", function(){
+    beforeEach(function(){
+      Person = {
+        health: 'middle'
+      };
+
+      Englishman = Person.tpDerive();
+
+      Musician = Englishman.tpDerive();
+
+      john = Musician.tpDerive({
+        health: 'great'
+      });
+    });
+    
+    describe("has own value of a specified prooerty", function(){
+      john.test = function(){ this.tpAncestorHaving('health'); };
+      expects(john.test).toBe(Musician);
+    });
+    
+    describe("does not have own value of a specified prooerty, but inherits it", function(){
+      
+    });
+     
+  });
+});

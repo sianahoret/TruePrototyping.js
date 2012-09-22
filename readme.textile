@@ -10,13 +10,13 @@ Stop thinking with "classes" and "instances" - think with true prototype chain, 
 
 h3. Traditional javascript inheritance model is weird
 
-While javascript's inheritance model is propotype-based by definition, the traditional constructor pattern actually mimics classical OOP. So instead of "True Prototypal Inheritance":http://en.wikipedia.org/wiki/Prototype-based_programming we have a weird hybrid of two inheritance models, and so many programmers are not comfortable with inheritance in javascript. Using functions as object constructors with "new" operator and excurrent implementation of "prototype" and "constructor" properties, "typeof" and "instanceof" operators makes a program more complex and confusing than it can be.
+Inspite of javascript's inheritance model is propotypal by definition, <b>constructor pattern, which is integrated into the language, actually mimics classical OOP</b>. So instead of "True Prototypal Inheritance":http://en.wikipedia.org/wiki/Prototype-based_programming we have a weird hybrid of two inheritance models, and so many programmers are not comfortable with inheritance in javascript. _Using functions as object constructors with "new" operator, excurrent implementation of "prototype" and "constructor" properties, "typeof" and "instanceof" operators makes a program more complex and confusing than it can be.__
 
 To better realize what I mean you can visit these links:
 * "'Prototypal Inheritance in JavaScript' by Douglas Crockford":http://javascript.crockford.com/prototypal.html. A quote from there: "JavaScript's constructor pattern obscured JavaScript's true prototypal nature".
 * "Confusion with 'constructor' property":http://joost.zeekat.nl/constructors-considered-mildly-confusing.html
 
-There is a lot of javascript libraries and frameworks which provide class-like APIs and mimics classical OOP even more - they only wrap constructor-driven inheritance model so that programmer may not think about prototype property, but it is still not the mentioned True Prototypal Inheritance. At the same time, I do not know a library which follows the true prototypal inheritance style, and I am upset by this. I guess the "true style" deserves to be more used than it is at nowadays.
+<b>There is a lot of javascript libraries and frameworks which provide class-like APIs and mimics classical OOP even more</b> - they only wrap constructor-driven inheritance model so that programmer may not think about prototype property, but it is still not the mentioned True Prototypal Inheritance. At the same time, <b>I do not know a library which follows the true prototypal inheritance style</b>, and I am upset by this. I guess the "true style" deserves to be more used than it is at nowadays.
 
 h3. Ways of using true prototypal inheritance style in javascript
 
@@ -51,7 +51,9 @@ A stuff providing a convenient and uniform way for introspection and lookup of t
 
 The 'tp' prefix (abbreviation of "true prototyping") is used to eliminate possibility of name conflicts with other libraries and frameworks or just to match to your naming preferences. The prefix can be changed with the following code just after TruePrototyping.js is interpreted:
 
-  TruePrototyping.usePrefix('_'); // underscore will be used instead of 'tp'
+<pre>
+TruePrototyping.usePrefix('_'); // underscore will be used instead of 'tp'
+</pre>
 
 h3. What you need to start using TruePrototyping library
 

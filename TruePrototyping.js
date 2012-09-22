@@ -18,6 +18,9 @@
     var _super                  = _prefix + "Super";
     var _superImmediate         = _prefix + "SuperImmediate";
     var _dependingOnSuperLevel  = _prefix + "DependingOnSuperLevel";
+    var _ancestorHaving         = _prefix + "AncestorHaving";
+    var _ancestorHavingOwn      = _prefix + "AncestorHavingOwn";
+    
 
     /** Derive
     This is a syntactical sugar over ES5 Object.create.
@@ -54,7 +57,7 @@
     Object.defineProperty(Object.prototype, _ancestors, {
       enumerable: false,
       configurable: true,
-      get: function(){
+      get: function(){s
         var immediateAncestor = this[_ancestor];
         return immediateAncestor ? [ immediateAncestor ].concat(immediateAncestor[_ancestors]) : [];
       }
@@ -98,6 +101,15 @@
     var isString = function(obj){
       return (typeof obj == "string") || (obj.constructor == String);
     }
+    
+    /** AncestorHaving
+    */
+    Object.defineProperty(Object.prototype, _super, {
+      enumerable: false,
+      configurable: true,
+      value: function(propName){
+      }
+    });
     
     /** Super
     This is a short way to call on 'this' object the nearest (amoung ancestors) different implementation of the specified method (true super).
