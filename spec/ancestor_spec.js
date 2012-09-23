@@ -136,32 +136,102 @@ describeProperty("tpIsDescendantOf", function() {
   });
 });
 
-describeProperty("tpAncestorHaving", function() {
+describeProperty("tpHasProperty", function() {
   shouldBeDefinedOnAnyObject();
   
-  describe("Should return the nearest ancestor, which", function(){
-    beforeEach(function(){
-      Person = {
-        health: 'middle'
-      };
-
-      Englishman = Person.tpDerive();
-
-      Musician = Englishman.tpDerive();
-
-      john = Musician.tpDerive({
-        health: 'great'
+  beforeEach(function(){
+    Person = {
+      health: 'middle'
+    };
+  
+    Englishman = Person.tpDerive();
+    
+    Musician = Englishman.tpDerive();
+  
+    john = Musician.tpDerive({
+      health: 'great'
+    });
+  });
+  
+  describe("Should throw an exception,", function(){
+    it("if the property name is not specified", function(){
+      expect(function(){ Person.tpHasProperty() }).toThrow("Property name should be specified and it should be a string!");
+    });
+    
+    it("if the property name is not string", function(){
+      expect(function(){ Person.tpHasProperty(123) }).toThrow("Property name should be specified and it should be a string!");
+    });
+  });
+  
+  describe("Should return true, if", function(){  
+    describe("the respondent object has OWN specified prooerty", function(){
+      it("and the property value is not null and is not 'undefined'", function(){
+        expect(john.tpHasProperty('health')).toBe(true);
+      });
+      
+      it("and the property value is null", function(){
+        john.health = null;
+        expect(john.tpHasProperty('health')).toBe(true);
+      });
+      
+      it("and the property value is null", function(){
+        john.health = void(0);
+        expect(john.tpHasProperty('health')).toBe(true);
       });
     });
     
-    describe("has own value of a specified prooerty", function(){
-      john.test = function(){ this.tpAncestorHaving('health'); };
-      expects(john.test).toBe(Musician);
-    });
-    
-    describe("does not have own value of a specified prooerty, but inherits it", function(){
+    describe("the respondent object has INHERITED specified property", function(){
+      it("and the property value is not null and is not 'undefined'", function(){
+        expect(Musician.tpHasProperty('health')).toBe(true);
+      });
       
+      it("and the property value is null", function(){
+        Person.health = null;
+        expect(Musician.tpHasProperty('health')).toBe(true);
+      });
+      
+      it("and the property value is null", function(){
+        Person.health = void(0);
+        expect(Musician.tpHasProperty('health')).toBe(true);
+      });
     });
-     
   });
+  
+  describe("Should return false, if the respondent object does not have the specified property", function(){  
+    it('neither own nor inherited', function(){
+      delete Person.health;
+      expect(Musician.tpHasProperty('health')).toBe(false);
+    });
+  });
+  
 });
+
+// describeProperty("tpAncestorHaving", function() {
+//   shouldBeDefinedOnAnyObject();
+// 
+//   beforeEach(function(){
+//     Person = {
+//       health: 'middle'
+//     };
+// 
+//     Englishman = Person.tpDerive();
+//     
+//     Musician = Englishman.tpDerive();
+// 
+//     john = Musician.tpDerive({
+//       health: 'great'
+//     });
+//   });
+//   
+//   describe("Should return the nearest ancestor, which", function(){
+//     it("has own value of a specified prooerty", function(){
+//       john.getAncestor = function(){ this.tpAncestorHaving('health'); };
+//       expect(john.getAncestor()).toBe(Musician);
+//     });
+//     
+//     // describe("does not have own value of a specified prooerty, but inherits it", function(){
+//     //   
+//     // });
+//      
+//   });
+// });

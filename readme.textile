@@ -48,6 +48,7 @@ A stuff providing a convenient and uniform way for introspection and lookup of t
 | *tpSuper*(methodName, methodArgs) method          | Calls on the object which the method is called on the nearest base implementation of the methodName method which differs from the implementation this object has. The rest of passed parameters (methodArgs) are transmitted to the call. |
 | *tpSuperImmediate*(methodName, methodArgs) method | Similar to tpSuper, but unlike it calls the immediate ancestor's implementation of methodName, even if the immediate ancestor's implementation does not differ from the implementation this object has. |
 | *tpDependingOnSuperLevel*(outOfRecursionValue, inRecursionValue) method | Returns outOfRecursionValue, being called quite out or at the first level of super recursion. Returns inRecursionValue, being called inside super recursion (on any level more than the first one). |
+| *tpHasProperty*(propName) | Returns a boolean indicating whether an object contains the specified property directly or inherited. The method returns true even if the specifies property is defined in ancestor and has value of type "undefined" :) |
 
 The 'tp' prefix (abbreviation of "true prototyping") is used to eliminate possibility of name conflicts with other libraries and frameworks or just to match to your naming preferences. The prefix can be changed with the following code just after TruePrototyping.js is interpreted:
 

@@ -18,6 +18,7 @@
     var _super                  = _prefix + "Super";
     var _superImmediate         = _prefix + "SuperImmediate";
     var _dependingOnSuperLevel  = _prefix + "DependingOnSuperLevel";
+    var _hasProperty            = _prefix + "HasProperty";
     var _ancestorHaving         = _prefix + "AncestorHaving";
     var _ancestorHavingOwn      = _prefix + "AncestorHavingOwn";
     
@@ -57,7 +58,7 @@
     Object.defineProperty(Object.prototype, _ancestors, {
       enumerable: false,
       configurable: true,
-      get: function(){s
+      get: function(){
         var immediateAncestor = this[_ancestor];
         return immediateAncestor ? [ immediateAncestor ].concat(immediateAncestor[_ancestors]) : [];
       }
@@ -100,16 +101,46 @@
     };
     var isString = function(obj){
       return (typeof obj == "string") || (obj.constructor == String);
-    }
+    };
     
-    /** AncestorHaving
+    /** tpHasProperty
+    Returns a boolean indicating whether an object contains the specified property directly or inherited. 
     */
-    Object.defineProperty(Object.prototype, _super, {
+    Object.defineProperty(Object.prototype, _hasProperty, {
       enumerable: false,
       configurable: true,
       value: function(propName){
+        if(!arguments.length || !isString(arguments[0])) { 
+          throw "Property name should be specified and it should be a string!";
+        }
+        var test = function(obj){ return obj.hasOwnProperty(propName); };
+        return (test(this) || this[_ancestors].some(test));
       }
     });
+    
+    /** AncestorHaving
+    Return an ancestor, which has the specified property, either own or inherited.
+    */
+    // Object.defineProperty(Object.prototype, _ancestorHaving, {
+    //   enumerable: false,
+    //   configurable: true,
+    //   value: function(propName){
+    //     if(this[_ancestor] && this[_ancestor][_hasProperty](propName)){
+    //       return this[_ancestor];
+    //     }
+    //     // There is no sense to go up further: if the property is absent on this[_ancestor], it is absent above.
+    //   }
+    // });
+    
+    /** AncestorHavingOwn
+    Return an ancestor, which has own specified property, and if the property is function (method) - if the function is different than 'this' object has.
+    */
+    // Object.defineProperty(Object.prototype, _ancestorHavingOwn, {
+    //   enumerable: false,
+    //   configurable: true,
+    //   value: function(propName){
+    //   }
+    // });
     
     /** Super
     This is a short way to call on 'this' object the nearest (amoung ancestors) different implementation of the specified method (true super).
@@ -178,6 +209,9 @@
       }
     });
     
+    /** DependingOnSuperLevel
+    Returns outOfRecursionValue, being called quite out or at the first level of super recursion. Returns inRecursionValue, being called inside super recursion (on any level more than the first one).
+    */
     Object.defineProperty(Object.prototype, _dependingOnSuperLevel, {
       enumerable: false,
       configurable: true,
