@@ -19,12 +19,14 @@
     var _superImmediate         = _prefix + "SuperImmediate";
     var _dependingOnSuperLevel  = _prefix + "DependingOnSuperLevel";
     var _hasProperty            = _prefix + "HasProperty";
+    var _nearestAncestorMatchingTo = _prefix + "NearestAncestorMatchingTo";
     var _ancestorHaving         = _prefix + "AncestorHaving";
     var _ancestorHavingOwn      = _prefix + "AncestorHavingOwn";
     
     var _errors = {
       missingPropertyName:  "Property name should be specified and it should be a string!",
-      missingMethodName:    "Method name should be specified and it should be a string!"
+      missingMethodName:    "Method name should be specified and it should be a string!",
+      missingConditionFunction: "Condition function should be passed!"
     };
     
 
@@ -98,12 +100,12 @@
     var decrementSuperDepth = function(obj){
       obj.superDepth ? (obj.superDepth -= 1) : (delete obj.superDepth);
     };
-    var getNextPropOwner = function(obj){
-      obj.propOwner = obj.propOwner ? obj.propOwner[_ancestor] : obj[_ancestor];
-    };
-    var clearPropOwner = function(obj){
-      delete obj.propOwner;
-    };
+    // var getNextPropOwner = function(obj){
+    //   obj.propOwner = obj.propOwner ? obj.propOwner[_ancestor] : obj[_ancestor];
+    // };
+    // var clearPropOwner = function(obj){
+    //   delete obj.propOwner;
+    // };
     var isString = function(obj){
       return (typeof obj == "string") || (obj.constructor == String);
     };
@@ -122,6 +124,29 @@
         return (test(this) || this[_ancestors].some(test));
       }
     });
+    
+    // Object.defineProperty(Object.prototype, _nearestAncestorMatchingTo, {
+    //   enumerable: false,
+    //   configurable: true,
+    //   value: function(conditionFunc){
+    //     // for(var a=0; a< this[_ancestors].length; a++){
+    //     //   var ancestor = this[_ancestors][a];
+    //     //   if(conditionFunc(ancestor)){
+    //     //     return ancestor;
+    //     //   }
+    //     // }
+    //     // return null;
+    //     
+    //     if(!arguments.length || (typeof conditionFunc != "function")) { 
+    //       throw _errors.missingConditionFunction;
+    //     }
+    //     
+    //     return this[_ancestors].reduce(function(res, curAncestor){
+    //       return res || (conditionFunc(curAncestor) ? curAncestor : null);
+    //     }, null);
+    //   }
+    // });
+    
     
     /** AncestorHaving
     Return an ancestor, which responds to the specified property (has it either own or inherited).
@@ -152,17 +177,13 @@
           throw _errors.missingPropertyName;
         }
         
-        for(var a=0; a< this[_ancestors].length; a++){
-          var ancestor = this[_ancestors][a];
-          if(ancestor.hasOwnProperty(propName)){
-            return ancestor;
-          }
-        }
-        return null;
+        return this[_ancestors].reduce(function(res, curAncestor, index, array){
+          return res || (curAncestor.hasOwnProperty(propName) ? curAncestor : null);
+        }, null);
         
-        // this[_ancestors].reduce(function(res, curAncestor){
-        //   return res || (curAncestor.hasOwnProperty(propName) ? curAncestor : null);
-        // }, null);
+        // return this[_nearestAncestorMatchingTo](function(ancestor){
+        //   return ancestor.hasOwnProperty(propName);
+        // };
       }
     });
     
@@ -183,22 +204,20 @@
         
         // this.propOwner is introduced to prevent cyclic call of the same implementation of propName
         // in case of recursion (if this.tpSuper() call is encountered inside a base implementation).
-        getNextPropOwner(this);
+        this.propOwner = (this.propOwner || this)[_ancestorHavingOwn](propName);
         
         while(this.propOwner){ // look for ancestor having different implementation
-          if(this.propOwner.hasOwnProperty(propName) && (typeof this.propOwner[propName] == "function") 
-              && this.propOwner[propName] != this[propName]
-            ){
+          if((typeof this.propOwner[propName] == "function") && (this.propOwner[propName] != this[propName])){
             incrementSuperDepth(this);
             res = this.propOwner[propName].apply(this, args);
             break;  
           } else {
-            getNextPropOwner(this);
+            this.propOwner = (this.propOwner || this)[_ancestorHavingOwn](propName);
           }
         }
         
         decrementSuperDepth(this);
-        clearPropOwner(this); // possible recursion is completed, forget about it
+        delete this.propOwner; // possible recursion is completed, forget about it
         return res; // will return undefined, unless this.propOwner[propName] was called, what is intended
       }
     });
