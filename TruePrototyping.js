@@ -109,7 +109,7 @@
     };
     
     /** tpHasProperty
-    Returns a boolean indicating whether an object contains the specified property directly or inherited. 
+    Returns a boolean indicating whether an object has the specified property (either own or inherited). 
     */
     Object.defineProperty(Object.prototype, _hasProperty, {
       enumerable: false,
@@ -144,12 +144,27 @@
     /** AncestorHavingOwn
     Return an ancestor, which has own specified property, and if the property is function (method) - if the function is different than 'this' object has.
     */
-    // Object.defineProperty(Object.prototype, _ancestorHavingOwn, {
-    //   enumerable: false,
-    //   configurable: true,
-    //   value: function(propName){
-    //   }
-    // });
+    Object.defineProperty(Object.prototype, _ancestorHavingOwn, {
+      enumerable: false,
+      configurable: true,
+      value: function(propName){
+        if(!arguments.length || !isString(arguments[0])) { 
+          throw _errors.missingPropertyName;
+        }
+        
+        for(var a=0; a< this[_ancestors].length; a++){
+          var ancestor = this[_ancestors][a];
+          if(ancestor.hasOwnProperty(propName)){
+            return ancestor;
+          }
+        }
+        return null;
+        
+        // this[_ancestors].reduce(function(res, curAncestor){
+        //   return res || (curAncestor.hasOwnProperty(propName) ? curAncestor : null);
+        // }, null);
+      }
+    });
     
     /** Super
     This is a short way to call on 'this' object the nearest (amoung ancestors) different implementation of the specified method (true super).

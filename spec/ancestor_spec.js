@@ -217,11 +217,11 @@ describeProperty("tpAncestorHaving", function() {
   onMissingPropertyNameShouldThrow("Property name should be specified and it should be a string!");
   
   describe("Should return the nearest ancestor, which", function(){
-    it("has own value of a specified property", function(){
+    it("has either own specified property", function(){
       expect(john.tpAncestorHaving('health')).toBe(Musician);
     });
     
-    it("does not have own value of a specified prooerty, but has inherited one", function(){
+    it("or inherited specified property", function(){
       expect(Musician.tpAncestorHaving('health')).toBe(Englishman);
     });
   });
@@ -230,6 +230,39 @@ describeProperty("tpAncestorHaving", function() {
     it("if the specified property is not defined above in hierarchy", function(){
       delete Person.health;
       expect(Musician.tpAncestorHaving('health')).toBeNull();
+    });    
+  });
+});
+
+describeProperty("tpAncestorHavingOwn", function() {
+  shouldBeDefinedOnAnyObject();
+
+  beforeEach(function(){
+    Person = {
+      health: 'middle'
+    };
+
+    Englishman = Person.tpDerive();
+    
+    Musician = Englishman.tpDerive();
+
+    john = Musician.tpDerive({
+      health: 'great'
+    });
+  });
+  
+  onMissingPropertyNameShouldThrow("Property name should be specified and it should be a string!");
+  
+  describe("Should return the nearest ancestor, which", function(){
+    it("has own specified property", function(){
+      expect(Musician.tpAncestorHavingOwn('health')).toBe(Person);
+    });    
+  });
+  
+  describe("Should return null,", function(){
+    it("if the specified property is not defined above in hierarchy", function(){
+      delete Person.health;
+      expect(Musician.tpAncestorHavingOwn('health')).toBeNull();
     });    
   });
 });
