@@ -22,6 +22,11 @@
     var _ancestorHaving         = _prefix + "AncestorHaving";
     var _ancestorHavingOwn      = _prefix + "AncestorHavingOwn";
     
+    var _errors = {
+      missingPropertyName:  "Property name should be specified and it should be a string!",
+      missingMethodName:    "Method name should be specified and it should be a string!"
+    };
+    
 
     /** Derive
     This is a syntactical sugar over ES5 Object.create.
@@ -111,7 +116,7 @@
       configurable: true,
       value: function(propName){
         if(!arguments.length || !isString(arguments[0])) { 
-          throw "Property name should be specified and it should be a string!";
+          throw _errors.missingPropertyName;
         }
         var test = function(obj){ return obj.hasOwnProperty(propName); };
         return (test(this) || this[_ancestors].some(test));
@@ -119,18 +124,22 @@
     });
     
     /** AncestorHaving
-    Return an ancestor, which has the specified property, either own or inherited.
+    Return an ancestor, which responds to the specified property (has it either own or inherited).
     */
-    // Object.defineProperty(Object.prototype, _ancestorHaving, {
-    //   enumerable: false,
-    //   configurable: true,
-    //   value: function(propName){
-    //     if(this[_ancestor] && this[_ancestor][_hasProperty](propName)){
-    //       return this[_ancestor];
-    //     }
-    //     // There is no sense to go up further: if the property is absent on this[_ancestor], it is absent above.
-    //   }
-    // });
+    Object.defineProperty(Object.prototype, _ancestorHaving, {
+      enumerable: false,
+      configurable: true,
+      value: function(propName){
+        if(!arguments.length || !isString(arguments[0])) { 
+          throw _errors.missingPropertyName;
+        }
+        if(this[_ancestor] && this[_ancestor][_hasProperty](propName)){
+          return this[_ancestor];
+        }
+        // There is no sense to go up further: if the property is absent on this[_ancestor], it is absent above.
+        return null;
+      }
+    });
     
     /** AncestorHavingOwn
     Return an ancestor, which has own specified property, and if the property is function (method) - if the function is different than 'this' object has.
@@ -150,7 +159,7 @@
       configurable: true,
       value: function(){ /* propName, *methodArgs */
         if(!arguments.length || !isString(arguments[0])) { 
-          throw "Method name should be specified and it should be a string!";
+          throw _errors.missingMethodName;
         } 
         var args = Array.prototype.slice.call(arguments);
         var propName = args.shift();
@@ -187,7 +196,7 @@
       configurable: true,
       value: function(){ /* propName, *methodArgs */
         if(!arguments.length || !isString(arguments[0])) { 
-          throw "Method name should be specified and it should be a string!";
+          throw _errors.missingMethodName;
         } 
         var args = Array.prototype.slice.call(arguments);
         var propName = args.shift();
@@ -196,15 +205,15 @@
         
         // this.propOwner is introduced to prevent cyclic call of the same implementation of propName
         // in case of recursion (if this.tpSuper() call is encountered inside a base implementation).
-        getNextPropOwner(this);
+        this.propOwner = (this.propOwner || this)[_ancestorHaving](propName);
         
-        if(this.propOwner && this.propOwner[propName] && (typeof this.propOwner[propName] == "function")){
+        if(this.propOwner && (typeof this.propOwner[propName] == "function")){
           incrementSuperDepth(this);
           res = this.propOwner[propName].apply(this, args); // here recursion is possible
         }
         
         decrementSuperDepth(this);
-        clearPropOwner(this); // possible recursion is completed, forget about it
+        delete this.propOwner; // possible recursion is completed, forget about it
         return res; // will return undefined, unless this.propOwner[propName] was called, what is intended
       }
     });

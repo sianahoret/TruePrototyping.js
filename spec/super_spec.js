@@ -28,6 +28,8 @@ describeProperty("tpSuper", function() {
     });
   });
 
+  onMissingPropertyNameShouldThrow("Method name should be specified and it should be a string!");
+
   describe("Should call on 'this' object the nearest (among ancestors) different implementation of a method", function(){
     it("with the same name", function(){
       expect(john.fullName()).toEqual("Musician Englishman Person John Lennon");
@@ -60,15 +62,6 @@ describeProperty("tpSuper", function() {
     });
   });
   
-  describe("Should throw an exception,", function(){
-    it("if the method name is not specified", function(){
-      expect(function(){ Person.tpSuper() }).toThrow("Method name should be specified and it should be a string!");
-    });
-    
-    it("if the method name is not string", function(){
-      expect(function(){ Person.tpSuper(123) }).toThrow("Method name should be specified and it should be a string!");
-    });
-  });
 });
 
 describeProperty("tpSuperImmediate", function() {
@@ -97,6 +90,8 @@ describeProperty("tpSuperImmediate", function() {
     });
   });
 
+  onMissingPropertyNameShouldThrow("Method name should be specified and it should be a string!");
+  
   describe("Should call on 'this' object the immediate ancestor's implementation of the specified method", function(){
     it("with the same name", function(){
       expect(john.fullName()).toEqual("Englishman Englishman Englishman Person John Lennon");
@@ -128,16 +123,6 @@ describeProperty("tpSuperImmediate", function() {
     
     it("if the method is not defined differently above in hierarchy, even there is a property with appropriate name", function(){
       expect(john.tpSuperImmediate('health')).toBeUndefined();
-    });
-  });
-
-  describe("Should throw an exception,", function(){
-    it("if the method name is not specified", function(){
-      expect(function(){ Person.tpSuperImmediate() }).toThrow("Method name should be specified and it should be a string!");
-    });
-    
-    it("if the method name is not string", function(){
-      expect(function(){ Person.tpSuperImmediate(123) }).toThrow("Method name should be specified and it should be a string!");
     });
   });
 
