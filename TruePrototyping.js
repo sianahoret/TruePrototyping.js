@@ -19,14 +19,14 @@
     var _superImmediate         = _prefix + "SuperImmediate";
     var _dependingOnSuperLevel  = _prefix + "DependingOnSuperLevel";
     var _hasProperty            = _prefix + "HasProperty";
-    var _nearestAncestorMatchingTo = _prefix + "NearestAncestorMatchingTo";
+    var _ancestorByCondition    = _prefix + "AncestorByCondition";
     var _ancestorHaving         = _prefix + "AncestorHaving";
     var _ancestorHavingOwn      = _prefix + "AncestorHavingOwn";
     
     var _errors = {
-      missingPropertyName:  "Property name should be specified and it should be a string!",
-      missingMethodName:    "Method name should be specified and it should be a string!",
-      missingConditionFunction: "Condition function should be passed!"
+      missingOrInvalidPropertyName:  "Property name should be specified and it should be a string!",
+      missingOrInvalidMethodName:    "Method name should be specified and it should be a string!",
+      missingOrInvalidPredicate: "Predicate should be specified and it should be a function!"
     };
     
 
@@ -110,7 +110,7 @@
       return (typeof obj == "string") || (obj.constructor == String);
     };
     
-    /** tpHasProperty
+    /** HasProperty
     Returns a boolean indicating whether an object has the specified property (either own or inherited). 
     */
     Object.defineProperty(Object.prototype, _hasProperty, {
@@ -118,51 +118,27 @@
       configurable: true,
       value: function(propName){
         if(!arguments.length || !isString(arguments[0])) { 
-          throw _errors.missingPropertyName;
+          throw _errors.missingOrInvalidPropertyName;
         }
         var test = function(obj){ return obj.hasOwnProperty(propName); };
-        return (test(this) || this[_ancestors].some(test));
+        return (test(this) || this[_ancestors].some(test)); // Also _ancestorByCondition could be used here instead of 'some'
       }
     });
     
-    // Object.defineProperty(Object.prototype, _nearestAncestorMatchingTo, {
-    //   enumerable: false,
-    //   configurable: true,
-    //   value: function(conditionFunc){
-    //     // for(var a=0; a< this[_ancestors].length; a++){
-    //     //   var ancestor = this[_ancestors][a];
-    //     //   if(conditionFunc(ancestor)){
-    //     //     return ancestor;
-    //     //   }
-    //     // }
-    //     // return null;
-    //     
-    //     if(!arguments.length || (typeof conditionFunc != "function")) { 
-    //       throw _errors.missingConditionFunction;
-    //     }
-    //     
-    //     return this[_ancestors].reduce(function(res, curAncestor){
-    //       return res || (conditionFunc(curAncestor) ? curAncestor : null);
-    //     }, null);
-    //   }
-    // });
-    
-    
-    /** AncestorHaving
-    Return an ancestor, which responds to the specified property (has it either own or inherited).
+    /** AncestorByCondition
+    Returns the nearest ancestor, on which predicate is evaluated to true. 
     */
-    Object.defineProperty(Object.prototype, _ancestorHaving, {
+    Object.defineProperty(Object.prototype, _ancestorByCondition, {
       enumerable: false,
       configurable: true,
-      value: function(propName){
-        if(!arguments.length || !isString(arguments[0])) { 
-          throw _errors.missingPropertyName;
+      value: function(predicate){
+        if(!arguments.length || (typeof predicate != "function")) { 
+          throw _errors.missingOrInvalidPredicate;
         }
-        if(this[_ancestor] && this[_ancestor][_hasProperty](propName)){
-          return this[_ancestor];
-        }
-        // There is no sense to go up further: if the property is absent on this[_ancestor], it is absent above.
-        return null;
+        
+        return this[_ancestors].reduce(function(res, curAncestor){
+          return res || (predicate(curAncestor) ? curAncestor : null);
+        }, null);
       }
     });
     
@@ -174,16 +150,30 @@
       configurable: true,
       value: function(propName){
         if(!arguments.length || !isString(arguments[0])) { 
-          throw _errors.missingPropertyName;
+          throw _errors.missingOrInvalidPropertyName;
         }
         
-        return this[_ancestors].reduce(function(res, curAncestor, index, array){
-          return res || (curAncestor.hasOwnProperty(propName) ? curAncestor : null);
-        }, null);
+        return this[_ancestorByCondition](function(ancestor){
+          return ancestor.hasOwnProperty(propName);
+        });
+      }
+    });
+    
+    /** AncestorHaving
+    Return an ancestor, which responds to the specified property (has it either own or inherited).
+    */
+    Object.defineProperty(Object.prototype, _ancestorHaving, {
+      enumerable: false,
+      configurable: true,
+      value: function(propName){
+        if(!arguments.length || !isString(arguments[0])) { 
+          throw _errors.missingOrInvalidPropertyName;
+        }
+
+        return this[_ancestorByCondition](function(ancestor){
+          return ancestor[_hasProperty](propName);
+        });
         
-        // return this[_nearestAncestorMatchingTo](function(ancestor){
-        //   return ancestor.hasOwnProperty(propName);
-        // };
       }
     });
     
@@ -195,7 +185,7 @@
       configurable: true,
       value: function(){ /* propName, *methodArgs */
         if(!arguments.length || !isString(arguments[0])) { 
-          throw _errors.missingMethodName;
+          throw _errors.missingOrInvalidMethodName;
         } 
         var args = Array.prototype.slice.call(arguments);
         var propName = args.shift();
@@ -230,7 +220,7 @@
       configurable: true,
       value: function(){ /* propName, *methodArgs */
         if(!arguments.length || !isString(arguments[0])) { 
-          throw _errors.missingMethodName;
+          throw _errors.missingOrInvalidMethodName;
         } 
         var args = Array.prototype.slice.call(arguments);
         var propName = args.shift();

@@ -153,7 +153,7 @@ describeProperty("tpHasProperty", function() {
     });
   });
   
-  onMissingPropertyNameShouldThrow("Property name should be specified and it should be a string!");
+  shouldCheckFirstArgument("Property name", String, "Property name should be specified and it should be a string!");
   
   describe("Should return true, if", function(){  
     describe("the respondent object has own specified prooerty", function(){
@@ -197,6 +197,44 @@ describeProperty("tpHasProperty", function() {
   });
 });
 
+describeProperty("tpAncestorByCondition", function() {
+  shouldBeDefinedOnAnyObject();
+  
+  beforeEach(function(){
+    Person = {
+      health: 'middle'
+    };
+
+    Englishman = Person.tpDerive();
+  
+    Musician = Englishman.tpDerive();
+
+    john = Musician.tpDerive({
+      health: 'great'
+    });
+  });
+  
+  shouldCheckFirstArgument("Predicate", Function, "Predicate should be specified and it should be a function!");
+  
+  it("Should return the nearest ancestor, in which predicate evaluates to true", function(){
+    expect(john.tpAncestorByCondition(function(theAncestor){
+      return theAncestor.hasOwnProperty('health');
+    })).toBe(Person);
+  });
+  
+  it("Should return the tpAncestor, if predicate is always true", function(){
+    expect(john.tpAncestorByCondition(function(){
+      return true;
+    })).toBe(john.tpAncestor);
+  });
+  
+  it("Should return null, if there is no ancestor, in which predicate evaluates to true", function(){
+    expect(john.tpAncestorByCondition(function(theAncestor){
+      return theAncestor.hasOwnProperty('qwerty');
+    })).toBeNull;
+  });
+});
+
 describeProperty("tpAncestorHaving", function() {
   shouldBeDefinedOnAnyObject();
 
@@ -214,7 +252,7 @@ describeProperty("tpAncestorHaving", function() {
     });
   });
   
-  onMissingPropertyNameShouldThrow("Property name should be specified and it should be a string!");
+  shouldCheckFirstArgument("Property name", String, "Property name should be specified and it should be a string!");
   
   describe("Should return the nearest ancestor, which", function(){
     it("has either own specified property", function(){
@@ -251,7 +289,7 @@ describeProperty("tpAncestorHavingOwn", function() {
     });
   });
   
-  onMissingPropertyNameShouldThrow("Property name should be specified and it should be a string!");
+  shouldCheckFirstArgument("Property name", String, "Property name should be specified and it should be a string!");
   
   describe("Should return the nearest ancestor, which", function(){
     it("has own specified property", function(){

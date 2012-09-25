@@ -28,7 +28,7 @@ describeProperty("tpSuper", function() {
     });
   });
 
-  onMissingPropertyNameShouldThrow("Method name should be specified and it should be a string!");
+  shouldCheckFirstArgument("Method name", String, "Method name should be specified and it should be a string!");
 
   describe("Should call on 'this' object the nearest (among ancestors) different implementation of a method", function(){
     it("with the same name", function(){
@@ -90,7 +90,7 @@ describeProperty("tpSuperImmediate", function() {
     });
   });
 
-  onMissingPropertyNameShouldThrow("Method name should be specified and it should be a string!");
+  shouldCheckFirstArgument("Method name", String, "Method name should be specified and it should be a string!");
   
   describe("Should call on 'this' object the immediate ancestor's implementation of the specified method", function(){
     it("with the same name", function(){
