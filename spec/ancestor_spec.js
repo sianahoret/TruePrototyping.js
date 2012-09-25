@@ -2,7 +2,6 @@ describeProperty("tpAncestor", function() {
   shouldBeDefinedOnAnyObject();
 
   describe("Should point to the actual object's prototype", function(){
-
     describe("when the object has been created with 'tpDerive' method -", function(){
       it("to the object which 'tpDerive' was called on", function(){
         var Person = {};
@@ -20,13 +19,12 @@ describeProperty("tpAncestor", function() {
         expect(objectCreatedByLiteral.tpAncestor).toBe(Object.prototype);
       });
     });
-    
-    describe("should be null", function(){
-      it("on the Object.prototype (the root of any hierarchy)", function(){
-        expect(Object.prototype.tpAncestor).toBeNull();
-      });
+  });
+  
+  describe("Should be null", function(){
+    it("on the Object.prototype (the root of any hierarchy)", function(){
+      expect(Object.prototype.tpAncestor).toBeNull();
     });
-
   });
 
 });
@@ -53,13 +51,93 @@ describeProperty("tpAncestors", function() {
 
   });
   
-  describe("should be empty", function(){
+  describe("Should be empty", function(){
     it("on the Object.prototype (the root of any hierarchy)", function(){
-      expect(Object.prototype.tpAncestors).toEqual(jasmine.any(Array));
-      expect(Object.prototype.tpAncestors.length).toEqual(0);
+      var res = Object.prototype.tpAncestors;
+      expect(res).toEqual(jasmine.any(Array));
+      expect(res.length).toEqual(0);
     });
   });
 
+});
+
+describeProperty("tpAncestorByCondition", function() {
+  shouldBeDefinedOnAnyObject();
+  shouldCheckFirstArgument("predicate", Function, "Predicate should be specified and it should be a function!");
+  
+  beforeEach(function(){
+    Person = { health: 'middle' };
+    Englishman = Person.tpDerive();
+    Musician = Englishman.tpDerive();
+    john = Musician.tpDerive({ health: 'great' });
+  });
+  
+  describe("Should return", function(){
+    it("the nearest ancestor, on which predicate evaluates to true", function(){
+      expect(john.tpAncestorByCondition(function(theAncestor){
+        return theAncestor.hasOwnProperty('health');
+      })).toBe(Person);
+    });
+  
+    it("the tpAncestor, if predicate is always true", function(){
+      var predicate = function(){ return true; };
+      expect(john.tpAncestorByCondition(predicate)).toBe(john.tpAncestor);
+    });
+    
+    describe("null,", function(){
+      it("if predicate is always false", function(){
+        var predicate = function(){ return false; };
+        expect(john.tpAncestorByCondition(predicate)).toBeNull();
+      });
+
+      it("if there is no ancestor, in which predicate evaluates to true", function(){
+        expect(john.tpAncestorByCondition(function(theAncestor){
+          return theAncestor.hasOwnProperty('qwerty');
+        })).toBeNull();
+      });
+    });
+  });
+});
+
+describeProperty("tpAncestorsByCondition", function() {
+  shouldBeDefinedOnAnyObject();
+  shouldCheckFirstArgument("predicate", Function, "Predicate should be specified and it should be a function!");
+  
+  beforeEach(function(){
+    Person = { health: 'middle' };
+    Englishman = Person.tpDerive();
+    Musician = Englishman.tpDerive({health: 'good'});
+    john = Musician.tpDerive({ health: 'great' });
+  });
+  
+  describe("Should return", function(){
+    it("all ancestors, on which predicate evaluates to true", function(){
+      expect(john.tpAncestorsByCondition(function(theAncestor){
+        return theAncestor.hasOwnProperty('health');
+      })).toEqual([Musician, Person]);
+    });
+  
+    it("the tpAncestors, if predicate is always true", function(){
+      var predicate = function(){ return true; };
+      expect(john.tpAncestorsByCondition(predicate)).toEqual(john.tpAncestors);
+    });
+    
+    describe("empty array,", function(){
+      it("if predicate is always false", function(){
+        var res = john.tpAncestorsByCondition(function(){ return false; });
+        expect(res).toEqual(jasmine.any(Array));
+        expect(res.length).toEqual(0);
+      });
+
+      it("if there is no ancestor, in which predicate evaluates to true", function(){
+        var res = john.tpAncestorsByCondition(function(ancestor){ 
+          return ancestor.hasOwnProperty('qwerty');
+        });
+        expect(res).toEqual(jasmine.any(Array));
+        expect(res.length).toEqual(0);
+      });
+    });
+  });
 });
 
 describeProperty("tpIsAncestorOf", function() {
@@ -134,54 +212,4 @@ describeProperty("tpIsDescendantOf", function() {
     });
 
   });
-});
-
-describeProperty("tpAncestorByCondition", function() {
-  shouldBeDefinedOnAnyObject();
-  
-  beforeEach(function(){
-    Person = {
-      health: 'middle'
-    };
-
-    Englishman = Person.tpDerive();
-  
-    Musician = Englishman.tpDerive();
-
-    john = Musician.tpDerive({
-      health: 'great'
-    });
-  });
-  
-  shouldCheckFirstArgument("Predicate", Function, "Predicate should be specified and it should be a function!");
-  
-  describe("Should return", function(){
-    it("the nearest ancestor, in which predicate evaluates to true", function(){
-      expect(john.tpAncestorByCondition(function(theAncestor){
-        return theAncestor.hasOwnProperty('health');
-      })).toBe(Person);
-    });
-  
-    it("the tpAncestor, if predicate is always true", function(){
-      expect(john.tpAncestorByCondition(function(){
-        return true;
-      })).toBe(john.tpAncestor);
-    });
-    
-    describe("null,", function(){
-      it("if predicate is always false", function(){
-        expect(john.tpAncestorByCondition(function(){
-          return false;
-        })).toBeNull();
-      });
-
-        it("if there is no ancestor, in which predicate evaluates to true", function(){
-        expect(john.tpAncestorByCondition(function(theAncestor){
-          return theAncestor.hasOwnProperty('qwerty');
-        })).toBeNull();
-      });
-    });
-  });
-  
-
 });

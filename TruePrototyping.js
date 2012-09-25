@@ -12,16 +12,15 @@
     var _prefix                 = TruePrototyping.prefix || 'tp';
     var _derive                 = _prefix + "Derive";
     var _ancestor               = _prefix + "Ancestor";
+    var _ancestorByCondition    = _prefix + "AncestorByCondition";
     var _ancestors              = _prefix + "Ancestors";
+    var _ancestorsByCondition   = _prefix + "AncestorsByCondition";
     var _isAncestorOf           = _prefix + "IsAncestorOf";
     var _isDescendantOf         = _prefix + "IsDescendantOf";
     var _super                  = _prefix + "Super";
     var _superImmediate         = _prefix + "SuperImmediate";
     var _dependingOnSuperLevel  = _prefix + "DependingOnSuperLevel";
     var _hasProperty            = _prefix + "HasProperty";
-    var _ancestorByCondition    = _prefix + "AncestorByCondition";
-    var _ancestorHaving         = _prefix + "AncestorHaving";
-    var _ancestorHavingOwn      = _prefix + "AncestorHavingOwn";
     
     var _errors = {
       missingOrInvalidPropertyName:  "Property name should be specified and it should be a string!",
@@ -29,6 +28,24 @@
       missingOrInvalidPredicate: "Predicate should be specified and it should be a function!"
     };
     
+    var firstArgumentShouldBe = function(checkedArgs, requiredTypeName, errorText){
+      if(!checkedArgs.length){
+        throw errorText;
+      }
+      
+      var checkType = function(obj){
+        switch(requiredTypeName){
+          case 'string': 
+            return (typeof obj == "string") || (obj.constructor == String);
+          default:
+            return (typeof obj == requiredTypeName);
+        };
+      };
+      
+      if(!checkType(checkedArgs[0], requiredTypeName)) { 
+        throw errorText;
+      }
+    };
 
     /** Derive
     This is a syntactical sugar over ES5 Object.create.
@@ -70,6 +87,36 @@
         return immediateAncestor ? [ immediateAncestor ].concat(immediateAncestor[_ancestors]) : [];
       }
     });
+    
+    /** AncestorByCondition
+    Returns the nearest ancestor, on which predicate is evaluated to true. 
+    */
+    Object.defineProperty(Object.prototype, _ancestorByCondition, {
+      enumerable: false,
+      configurable: true,
+      value: function(predicate){
+        firstArgumentShouldBe(arguments, 'function', _errors.missingOrInvalidPredicate);
+
+        return this[_ancestors].reduce(function(res, curAncestor){
+          return res || (predicate(curAncestor) ? curAncestor : null);
+        }, null);
+      }
+    });
+    
+    /** AncestorByCondition
+    Returns the nearest ancestor, on which predicate is evaluated to true. 
+    */
+    Object.defineProperty(Object.prototype, _ancestorsByCondition, {
+      enumerable: false,
+      configurable: true,
+      value: function(predicate){
+        firstArgumentShouldBe(arguments, 'function', _errors.missingOrInvalidPredicate);
+
+        return this[_ancestors].filter(function(curAncestor){
+          return predicate(curAncestor);
+        });
+      }
+    });
 
     /** IsAncestorOf
     Returns true, if this is one of the passed object's ancestors.
@@ -93,35 +140,12 @@
       }
     });
     
-    // A few 'private' functions (just to remove duplication, they are not needed outside)
     var incrementSuperDepth = function(obj){
       obj.superDepth ? (obj.superDepth += 1) : (obj.superDepth = 1);
     };
+    
     var decrementSuperDepth = function(obj){
       obj.superDepth ? (obj.superDepth -= 1) : (delete obj.superDepth);
-    };
-    
-    var isString = function(obj){
-      return (typeof obj == "string") || (obj.constructor == String);
-    };
-    
-    var firstArgumentShouldBe = function(checkedArgs, requiredTypeName, errorText){
-      if(!checkedArgs.length){
-        throw errorText;
-      }
-      
-      var checkType = function(obj){
-        switch(requiredTypeName){
-          case 'string': 
-            return (typeof obj == "string") || (obj.constructor == String);
-          default:
-            return (typeof obj == requiredTypeName);
-        };
-      };
-      
-      if(!checkType(checkedArgs[0], requiredTypeName)) { 
-        throw errorText;
-      }
     };
     
     var ancestorHavingMethod = function(objToFindAboveWhich, methodName){
@@ -149,21 +173,6 @@
         
         var test = function(obj){ return obj.hasOwnProperty(propName); };
         return (test(this) || this[_ancestors].some(test)); // Also _ancestorByCondition could be used here instead of 'some'
-      }
-    });
-    
-    /** AncestorByCondition
-    Returns the nearest ancestor, on which predicate is evaluated to true. 
-    */
-    Object.defineProperty(Object.prototype, _ancestorByCondition, {
-      enumerable: false,
-      configurable: true,
-      value: function(predicate){
-        firstArgumentShouldBe(arguments, 'function', _errors.missingOrInvalidPredicate);
-
-        return this[_ancestors].reduce(function(res, curAncestor){
-          return res || (predicate(curAncestor) ? curAncestor : null);
-        }, null);
       }
     });
     

@@ -53,10 +53,11 @@ h4. 2. The stuff providing a convenient and uniform way for +introspection and l
 
 |_. Stuff                                           |_. Description |
 | *tpAncestor* property                             | Returns the immediate ancestor of the object which the property is called on. |
-| *tpAncestors* property                            | Returns array of all ancestors of the object which the property is called on. |
+| *tpAncestorByCondition*(predicate) method         | Returns the nearest ancestor, on which predicate is evaluated to true. |
+| *tpAncestors* property                            | Returns an array of all ancestors of the object which the property is called on. |
+| *tpAncestorsByCondition*(predicate) method        | Returns an array of all ancestors, on which predicate is evaluated to true. |
 | *tpIsAncestorOf*(descendantContender) method      | Returns true, if the object which the method is called on is an ancestor (through any number of levels) of the descendantContender object, otherwise false. |
 | *tpIsDescendantOf*(ancestorContender) method      | Returns true, if the object which the method is called on is an descendant (through any number of levels) of the ancestorContender object, otherwise false. |
-| *tpAncestorByCondition*(predicate) method         | Returns the nearest ancestor, on which predicate is evaluated to true. |
 | *tpSuper*(methodName, methodArgs) method          | Calls on the object which the method is called on the nearest base implementation of the methodName method which differs from the implementation this object has. The rest of passed parameters (methodArgs) are transmitted to the call. |
 | *tpSuperImmediate*(methodName, methodArgs) method | Similar to tpSuper, but unlike it calls the immediate ancestor's implementation of methodName, even if the immediate ancestor's implementation does not differ from the implementation this object has. |
 | *tpDependingOnSuperLevel*(outOfRecursionValue, inRecursionValue) method | Returns outOfRecursionValue, being called quite out or at the first level of super recursion. Returns inRecursionValue, being called inside super recursion (on any level more than the first one). The method is useful inside methods, which are called with tpSuper or tpSuperImmediate. |
