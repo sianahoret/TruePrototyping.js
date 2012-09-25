@@ -100,19 +100,41 @@
     var decrementSuperDepth = function(obj){
       obj.superDepth ? (obj.superDepth -= 1) : (delete obj.superDepth);
     };
+    
     var isString = function(obj){
       return (typeof obj == "string") || (obj.constructor == String);
     };
+    
+    var firstArgumentShouldBe = function(checkedArgs, requiredTypeName, errorText){
+      if(!checkedArgs.length){
+        throw errorText;
+      }
+      
+      var checkType = function(obj){
+        switch(requiredTypeName){
+          case 'string': 
+            return (typeof obj == "string") || (obj.constructor == String);
+          default:
+            return (typeof obj == requiredTypeName);
+        };
+      };
+      
+      if(!checkType(checkedArgs[0], requiredTypeName)) { 
+        throw errorText;
+      }
+    };
+    
     var ancestorHavingMethod = function(objToFindAboveWhich, methodName){
       return objToFindAboveWhich[_ancestorByCondition](function(theAncestor){
         return theAncestor[_hasProperty](methodName) && (typeof theAncestor[methodName] == "function")
       });
     };
+    
     var ancestorHavingDifferentMethod = function(objToFindAboveWhich, methodName, methodCompareTo){
       return objToFindAboveWhich[_ancestorByCondition](function(theAncestor){
         return theAncestor.hasOwnProperty(methodName) 
-                && (typeof theAncestor[methodName] == "function") 
-                && (theAncestor[methodName] != methodCompareTo)
+          && (typeof theAncestor[methodName] == "function") 
+          && (theAncestor[methodName] != methodCompareTo)
       });
     };
     
@@ -123,9 +145,8 @@
       enumerable: false,
       configurable: true,
       value: function(propName){
-        if(!arguments.length || !isString(arguments[0])) { 
-          throw _errors.missingOrInvalidPropertyName;
-        }
+        firstArgumentShouldBe(arguments, 'string', _errors.missingOrInvalidPropertyName);
+        
         var test = function(obj){ return obj.hasOwnProperty(propName); };
         return (test(this) || this[_ancestors].some(test)); // Also _ancestorByCondition could be used here instead of 'some'
       }
@@ -138,10 +159,8 @@
       enumerable: false,
       configurable: true,
       value: function(predicate){
-        if(!arguments.length || (typeof predicate != "function")) { 
-          throw _errors.missingOrInvalidPredicate;
-        }
-        
+        firstArgumentShouldBe(arguments, 'function', _errors.missingOrInvalidPredicate);
+
         return this[_ancestors].reduce(function(res, curAncestor){
           return res || (predicate(curAncestor) ? curAncestor : null);
         }, null);
@@ -155,9 +174,7 @@
       enumerable: false,
       configurable: true,
       value: function(propName){
-        if(!arguments.length || !isString(arguments[0])) { 
-          throw _errors.missingOrInvalidPropertyName;
-        }
+        firstArgumentShouldBe(arguments, 'string', _errors.missingOrInvalidPropertyName);
         
         return this[_ancestorByCondition](function(ancestor){
           return ancestor.hasOwnProperty(propName);
@@ -172,9 +189,7 @@
       enumerable: false,
       configurable: true,
       value: function(propName){
-        if(!arguments.length || !isString(arguments[0])) { 
-          throw _errors.missingOrInvalidPropertyName;
-        }
+        firstArgumentShouldBe(arguments, 'string', _errors.missingOrInvalidPropertyName);
 
         return this[_ancestorByCondition](function(ancestor){
           return ancestor[_hasProperty](propName);
@@ -190,9 +205,8 @@
       enumerable: false,
       configurable: true,
       value: function(){ /* propName, *methodArgs */
-        if(!arguments.length || !isString(arguments[0])) { 
-          throw _errors.missingOrInvalidMethodName;
-        } 
+        firstArgumentShouldBe(arguments, 'string', _errors.missingOrInvalidMethodName);
+
         var args = Array.prototype.slice.call(arguments);
         var propName = args.shift();
         
@@ -220,9 +234,8 @@
       enumerable: false,
       configurable: true,
       value: function(){ /* propName, *methodArgs */
-        if(!arguments.length || !isString(arguments[0])) { 
-          throw _errors.missingOrInvalidMethodName;
-        } 
+        firstArgumentShouldBe(arguments, 'string', _errors.missingOrInvalidMethodName);
+
         var args = Array.prototype.slice.call(arguments);
         var propName = args.shift();
 
