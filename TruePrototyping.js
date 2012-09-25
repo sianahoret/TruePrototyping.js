@@ -100,18 +100,24 @@
     var decrementSuperDepth = function(obj){
       obj.superDepth ? (obj.superDepth -= 1) : (delete obj.superDepth);
     };
-    // var getNextPropOwner = function(obj){
-    //   obj.propOwner = obj.propOwner ? obj.propOwner[_ancestor] : obj[_ancestor];
-    // };
-    // var clearPropOwner = function(obj){
-    //   delete obj.propOwner;
-    // };
     var isString = function(obj){
       return (typeof obj == "string") || (obj.constructor == String);
     };
+    var ancestorHavingMethod = function(objToFindAboveWhich, methodName){
+      return objToFindAboveWhich[_ancestorByCondition](function(theAncestor){
+        return theAncestor[_hasProperty](methodName) && (typeof theAncestor[methodName] == "function")
+      });
+    };
+    var ancestorHavingDifferentMethod = function(objToFindAboveWhich, methodName, methodCompareTo){
+      return objToFindAboveWhich[_ancestorByCondition](function(theAncestor){
+        return theAncestor.hasOwnProperty(methodName) 
+                && (typeof theAncestor[methodName] == "function") 
+                && (theAncestor[methodName] != methodCompareTo)
+      });
+    };
     
     /** HasProperty
-    Returns a boolean indicating whether an object has the specified property (either own or inherited). 
+    Returns a boolean indicating whether an object has the specified property (either own or inherited).
     */
     Object.defineProperty(Object.prototype, _hasProperty, {
       enumerable: false,
@@ -194,16 +200,11 @@
         
         // this.propOwner is introduced to prevent cyclic call of the same implementation of propName
         // in case of recursion (if this.tpSuper() call is encountered inside a base implementation).
-        this.propOwner = (this.propOwner || this)[_ancestorHavingOwn](propName);
+        this.propOwner = ancestorHavingDifferentMethod((this.propOwner || this), propName, this[propName]);
         
-        while(this.propOwner){ // look for ancestor having different implementation
-          if((typeof this.propOwner[propName] == "function") && (this.propOwner[propName] != this[propName])){
-            incrementSuperDepth(this);
-            res = this.propOwner[propName].apply(this, args);
-            break;  
-          } else {
-            this.propOwner = (this.propOwner || this)[_ancestorHavingOwn](propName);
-          }
+        if(this.propOwner){
+          incrementSuperDepth(this);
+          res = this.propOwner[propName].apply(this, args); // here recursion is possible
         }
         
         decrementSuperDepth(this);
@@ -229,9 +230,9 @@
         
         // this.propOwner is introduced to prevent cyclic call of the same implementation of propName
         // in case of recursion (if this.tpSuper() call is encountered inside a base implementation).
-        this.propOwner = (this.propOwner || this)[_ancestorHaving](propName);
+        this.propOwner = ancestorHavingMethod((this.propOwner || this), propName, this[propName]);
         
-        if(this.propOwner && (typeof this.propOwner[propName] == "function")){
+        if(this.propOwner){
           incrementSuperDepth(this);
           res = this.propOwner[propName].apply(this, args); // here recursion is possible
         }
