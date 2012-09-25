@@ -140,28 +140,6 @@
       }
     });
     
-    var incrementSuperDepth = function(obj){
-      obj.superDepth ? (obj.superDepth += 1) : (obj.superDepth = 1);
-    };
-    
-    var decrementSuperDepth = function(obj){
-      obj.superDepth ? (obj.superDepth -= 1) : (delete obj.superDepth);
-    };
-    
-    var ancestorHavingMethod = function(objToFindAboveWhich, methodName){
-      return objToFindAboveWhich[_ancestorByCondition](function(theAncestor){
-        return theAncestor[_hasProperty](methodName) && (typeof theAncestor[methodName] == "function")
-      });
-    };
-    
-    var ancestorHavingDifferentMethod = function(objToFindAboveWhich, methodName, methodCompareTo){
-      return objToFindAboveWhich[_ancestorByCondition](function(theAncestor){
-        return theAncestor.hasOwnProperty(methodName) 
-          && (typeof theAncestor[methodName] == "function") 
-          && (theAncestor[methodName] != methodCompareTo)
-      });
-    };
-    
     /** HasProperty
     Returns a boolean indicating whether an object has the specified property (either own or inherited).
     */
@@ -176,33 +154,50 @@
       }
     });
     
+    var incrementSuperDepth = function(obj){
+      obj.superDepth ? (obj.superDepth += 1) : (obj.superDepth = 1);
+    };
+    
+    var decrementSuperDepth = function(obj){
+      obj.superDepth ? (obj.superDepth -= 1) : (delete obj.superDepth);
+    };
+    
+    var superTemplateImpl = function(ancestorPredicateFactory){
+      return function(){ /* propName, *methodArgs */
+        firstArgumentShouldBe(arguments, 'string', _errors.missingOrInvalidMethodName);
+
+        var args = Array.prototype.slice.call(arguments);
+        var propName = args.shift();
+      
+        var res;
+      
+        // this.propOwner is introduced to prevent cyclic call of the same implementation of propName
+        // in case of recursion (if this.tpSuper() call is encountered inside a base implementation).
+        this.propOwner = (this.propOwner || this)[_ancestorByCondition]( ancestorPredicateFactory(propName, this) );
+      
+        if(this.propOwner){
+          incrementSuperDepth(this);
+          res = this.propOwner[propName].apply(this, args); // here recursion is possible
+        }
+      
+        decrementSuperDepth(this);
+        delete this.propOwner; // possible recursion is completed, forget about it
+        return res; // will return undefined, unless this.propOwner[propName] was called, what is intended
+      }
+    };
+    
     /** Super
     This is a short way to call on 'this' object the nearest (amoung ancestors) different implementation of the specified method (true super).
     */
     Object.defineProperty(Object.prototype, _super, {
       enumerable: false,
       configurable: true,
-      value: function(){ /* propName, *methodArgs */
-        firstArgumentShouldBe(arguments, 'string', _errors.missingOrInvalidMethodName);
-
-        var args = Array.prototype.slice.call(arguments);
-        var propName = args.shift();
-        
-        var res;
-        
-        // this.propOwner is introduced to prevent cyclic call of the same implementation of propName
-        // in case of recursion (if this.tpSuper() call is encountered inside a base implementation).
-        this.propOwner = ancestorHavingDifferentMethod((this.propOwner || this), propName, this[propName]);
-        
-        if(this.propOwner){
-          incrementSuperDepth(this);
-          res = this.propOwner[propName].apply(this, args); // here recursion is possible
-        }
-        
-        decrementSuperDepth(this);
-        delete this.propOwner; // possible recursion is completed, forget about it
-        return res; // will return undefined, unless this.propOwner[propName] was called, what is intended
-      }
+      value: superTemplateImpl(function(methodName, self){
+        return function(theAncestor){
+          return theAncestor.hasOwnProperty(methodName) && (typeof theAncestor[methodName] == "function") 
+            && (theAncestor[methodName] != self[methodName]);
+        };
+      })
     });
 
     /** SuperImmediate
@@ -211,27 +206,11 @@
     Object.defineProperty(Object.prototype, _superImmediate, {
       enumerable: false,
       configurable: true,
-      value: function(){ /* propName, *methodArgs */
-        firstArgumentShouldBe(arguments, 'string', _errors.missingOrInvalidMethodName);
-
-        var args = Array.prototype.slice.call(arguments);
-        var propName = args.shift();
-
-        var res;
-        
-        // this.propOwner is introduced to prevent cyclic call of the same implementation of propName
-        // in case of recursion (if this.tpSuper() call is encountered inside a base implementation).
-        this.propOwner = ancestorHavingMethod((this.propOwner || this), propName, this[propName]);
-        
-        if(this.propOwner){
-          incrementSuperDepth(this);
-          res = this.propOwner[propName].apply(this, args); // here recursion is possible
-        }
-        
-        decrementSuperDepth(this);
-        delete this.propOwner; // possible recursion is completed, forget about it
-        return res; // will return undefined, unless this.propOwner[propName] was called, what is intended
-      }
+      value: superTemplateImpl(function(methodName){
+        return function(theAncestor){
+          return theAncestor[_hasProperty](methodName) && (typeof theAncestor[methodName] == "function");
+        };
+      })
     });
     
     /** DependingOnSuperLevel

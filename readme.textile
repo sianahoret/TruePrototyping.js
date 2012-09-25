@@ -155,5 +155,6 @@ Additionally to the library itself (TruePrototyping.js file) this repository con
 
 h3. TODO
 
+* Internal refactoring: merge propOwner and superDepth into a single superCallStack member, make the member not enumerable.
 * Add ability to provide 'initialize' method inside the second parameter of tpDerive. If initialize is passed, it will be called just after new object creation.
 * Implementation for an environment which is not "ES5-compliant":http://kangax.github.com/es5-compat-table/. For now I am not sure it is actually needed.
