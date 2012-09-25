@@ -167,37 +167,6 @@
       }
     });
     
-    /** AncestorHavingOwn
-    Return an ancestor, which has own specified property, and if the property is function (method) - if the function is different than 'this' object has.
-    */
-    Object.defineProperty(Object.prototype, _ancestorHavingOwn, {
-      enumerable: false,
-      configurable: true,
-      value: function(propName){
-        firstArgumentShouldBe(arguments, 'string', _errors.missingOrInvalidPropertyName);
-        
-        return this[_ancestorByCondition](function(ancestor){
-          return ancestor.hasOwnProperty(propName);
-        });
-      }
-    });
-    
-    /** AncestorHaving
-    Return an ancestor, which responds to the specified property (has it either own or inherited).
-    */
-    Object.defineProperty(Object.prototype, _ancestorHaving, {
-      enumerable: false,
-      configurable: true,
-      value: function(propName){
-        firstArgumentShouldBe(arguments, 'string', _errors.missingOrInvalidPropertyName);
-
-        return this[_ancestorByCondition](function(ancestor){
-          return ancestor[_hasProperty](propName);
-        });
-        
-      }
-    });
-    
     /** Super
     This is a short way to call on 'this' object the nearest (amoung ancestors) different implementation of the specified method (true super).
     */

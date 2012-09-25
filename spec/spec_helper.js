@@ -43,11 +43,13 @@ shouldCheckFirstArgument = function(firstArgumentComment, requiredArgumentType, 
       expect(function(){ Person[_property_]() }).toThrow(exceptionText);
     });
     
-    it("if the " + firstArgumentComment + " is not a " + requiredArgumentType, function(){
+    it("if the " + firstArgumentComment + " is not a " + requiredArgumentType.name, function(){
       expect(function(){ Person[_property_](123) }).toThrow(exceptionText);
     });
-    
-    it("if the " + firstArgumentComment + " is a " + requiredArgumentType, function(){
+  });
+  
+  describe("Should not throw an exception,", function(){
+    it("if the " + firstArgumentComment + " is a " + requiredArgumentType.name, function(){
       expect(function(){ Person[_property_](new requiredArgumentType()) }).not.toThrow();
     });
   });

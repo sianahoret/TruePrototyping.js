@@ -155,91 +155,33 @@ describeProperty("tpAncestorByCondition", function() {
   
   shouldCheckFirstArgument("Predicate", Function, "Predicate should be specified and it should be a function!");
   
-  it("Should return the nearest ancestor, in which predicate evaluates to true", function(){
-    expect(john.tpAncestorByCondition(function(theAncestor){
-      return theAncestor.hasOwnProperty('health');
-    })).toBe(Person);
-  });
-  
-  it("Should return the tpAncestor, if predicate is always true", function(){
-    expect(john.tpAncestorByCondition(function(){
-      return true;
-    })).toBe(john.tpAncestor);
-  });
-  
-  it("Should return null, if there is no ancestor, in which predicate evaluates to true", function(){
-    expect(john.tpAncestorByCondition(function(theAncestor){
-      return theAncestor.hasOwnProperty('qwerty');
-    })).toBeNull;
-  });
-});
-
-describeProperty("tpAncestorHaving", function() {
-  shouldBeDefinedOnAnyObject();
-
-  beforeEach(function(){
-    Person = {
-      health: 'middle'
-    };
-
-    Englishman = Person.tpDerive();
-    
-    Musician = Englishman.tpDerive();
-
-    john = Musician.tpDerive({
-      health: 'great'
+  describe("Should return", function(){
+    it("the nearest ancestor, in which predicate evaluates to true", function(){
+      expect(john.tpAncestorByCondition(function(theAncestor){
+        return theAncestor.hasOwnProperty('health');
+      })).toBe(Person);
     });
-  });
   
-  shouldCheckFirstArgument("Property name", String, "Property name should be specified and it should be a string!");
-  
-  describe("Should return the nearest ancestor, which", function(){
-    it("has either own specified property", function(){
-      expect(john.tpAncestorHaving('health')).toBe(Musician);
+    it("the tpAncestor, if predicate is always true", function(){
+      expect(john.tpAncestorByCondition(function(){
+        return true;
+      })).toBe(john.tpAncestor);
     });
     
-    it("or inherited specified property", function(){
-      expect(Musician.tpAncestorHaving('health')).toBe(Englishman);
+    describe("null,", function(){
+      it("if predicate is always false", function(){
+        expect(john.tpAncestorByCondition(function(){
+          return false;
+        })).toBeNull();
+      });
+
+        it("if there is no ancestor, in which predicate evaluates to true", function(){
+        expect(john.tpAncestorByCondition(function(theAncestor){
+          return theAncestor.hasOwnProperty('qwerty');
+        })).toBeNull();
+      });
     });
   });
   
-  describe("Should return null,", function(){
-    it("if the specified property is not defined above in hierarchy", function(){
-      delete Person.health;
-      expect(Musician.tpAncestorHaving('health')).toBeNull();
-    });    
-  });
-});
 
-describeProperty("tpAncestorHavingOwn", function() {
-  shouldBeDefinedOnAnyObject();
-
-  beforeEach(function(){
-    Person = {
-      health: 'middle'
-    };
-
-    Englishman = Person.tpDerive();
-    
-    Musician = Englishman.tpDerive();
-
-    john = Musician.tpDerive({
-      health: 'great'
-    });
-  });
-  
-  shouldCheckFirstArgument("Property name", String, "Property name should be specified and it should be a string!");
-  
-  describe("Should return the nearest ancestor, which", function(){
-    it("has own specified property", function(){
-      expect(Musician.tpAncestorHavingOwn('health')).toBe(Person);
-    });    
-  });
-  
-  describe("Should return null,", function(){
-    it("if the specified property is not defined above in hierarchy", function(){
-      delete Person.health;
-      expect(Musician.tpAncestorHavingOwn('health')).toBeNull();
-    });    
-  });
 });
