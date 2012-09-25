@@ -47,9 +47,9 @@ shouldCheckFirstArgument = function(firstArgumentComment, requiredArgumentType, 
       expect(function(){ Person[_property_](123) }).toThrow(exceptionText);
     });
     
-    // it("if the " + firstArgumentComment + " is a " + requiredArgumentType, function(){
-    //   expect(function(){ Person[_property_](jasmine.any(requiredArgumentType)) }).not.toThrow(exceptionText);
-    // });
+    it("if the " + firstArgumentComment + " is a " + requiredArgumentType, function(){
+      expect(function(){ Person[_property_](new requiredArgumentType()) }).not.toThrow();
+    });
   });
 };
 
