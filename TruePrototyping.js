@@ -43,7 +43,7 @@
         };
       };
       
-      if(!checkType(checkedArgs[0], requiredTypeName)) { 
+      if(!checkType(checkedArgs[0], requiredTypeName)) {
         throw errorText;
       }
     };
@@ -90,7 +90,7 @@
     });
     
     /** AncestorByCondition
-    Returns the nearest ancestor, on which predicate is evaluated to true. 
+    Returns the nearest ancestor, on which predicate is evaluated to true.
     */
     Object.defineProperty(Object.prototype, _ancestorByCondition, {
       enumerable: false,
@@ -104,8 +104,8 @@
       }
     });
     
-    /** AncestorByCondition
-    Returns the nearest ancestor, on which predicate is evaluated to true. 
+    /** AncestorsByCondition
+    Returns aray of ancestors, on which predicate is evaluated to true.
     */
     Object.defineProperty(Object.prototype, _ancestorsByCondition, {
       enumerable: false,
@@ -155,7 +155,8 @@
       }
     });
     
-    var CallStack = Array.prototype[_derive]({
+    // I could add 'last' method just into Array.prototype, but it is not the aim of this library, at least for now ;)
+    var EnhancedArray = Array.prototype[_derive]({
       last: function(obj){
         return this.length > 0 ? this[this.length-1] : null;
       }
@@ -169,38 +170,9 @@
       Object.defineProperty(obj, _superCallStack, {
         enumerable: false,
         configurable: true,
-        value: CallStack[_derive]()
+        value: EnhancedArray[_derive]()
       });
     };
-    
-    // var incrementSuperDepth = function(obj){
-    //   obj.superDepth ? (obj.superDepth += 1) : (obj.superDepth = 1);
-    // };
-    // 
-    // var decrementSuperDepth = function(obj){
-    //   obj.superDepth ? (obj.superDepth -= 1) : (delete obj.superDepth);
-    // };
-    
-    // I could patch Array.prototype with the 'last' method and use it here, but it is not an aim of this library, at least for now ;)
-    // var lastItemOfSuperCallStack = function(obj){
-    //   if(!obj.SuperCallStack){ return null; }
-    //   return obj.SuperCallStack.length > 0 ? obj.SuperCallStack[obj.SuperCallStack.length-1] : null;
-    // };
-    // 
-    // var pushToSuperCallStack = function(obj, itemWhichToPush){
-    //   if(!obj.SuperCallStack){ 
-    //     obj.SuperCallStack = [];
-    // 
-    //   }
-    //   return obj.SuperCallStack.push(itemWhichToPush);
-    // };
-    // 
-    // var popFromSuperCallStack = function(obj, itemWhichToPop){
-    //   if(!obj.SuperCallStack){ return; }
-    //   if(lastItemOfSuperCallStack(obj) === itemWhichToPop){
-    //     return obj.SuperCallStack.pop();
-    //   }
-    // };
     
     var superTemplateImpl = function(ancestorPredicateFactory){
       return function(){ /* methodName, *methodArgs */
@@ -223,7 +195,6 @@
           this[_superCallStack].pop();
         }
       
-        // decrementSuperDepth(this);
         return res; // will return undefined, unless this.propOwner[methodName] was called, what is intended
       }
     };
@@ -270,7 +241,7 @@
 
 
     // TODO:
-    // Fallback for ES3-compliant environment
+    // Fallback for ES3-only-compliant environment. Is it needed???
     //
     // if(typeof Object.create === "function"){
     //   ES5 = true;
@@ -302,6 +273,8 @@
     //       return object.constructor.prototype;
     //     };
     //   }
+    //
+    //   And so on...
     //
     // }
   };
