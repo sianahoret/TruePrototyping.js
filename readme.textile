@@ -29,18 +29,22 @@ A couple of links:
 So the idea is not new. What do I try to achieve with the TruePrototyping library? 
 
 
-h3. Brief overview of TruePrototyping.js library
+h3. Common "Philosophy" of TruePrototyping.js library
 
-TruePrototyping library provides some behavior to all objects by adding a few properties and methods.
+*TruePrototyping library provides some behavior to all objects by adding a few properties and methods.*
+
 Approach of how to apply the new behavior to an object is following: 
-* The library *does not create a wrap over a target object* (as jQuery does, for instance). All the added properties and methods can be called on the target object immediately.
-* The library *does not patch every concrete object by demand* (as Prototype does, for instance). Instead Object.prototype is patched and that's all.
+
+* *The library does not create a wrapper over a target object* (as jQuery does, for instance). All the added properties and methods can be called on the target object immediately. It allows a programmer to be free from keeping in mind more abstractions than he needs, a programmer never should to skip from wrapper to underlying object and vice versa, because a wrapper does not exist :).
+* *The library does not patch every concrete object by demand to apply a new behavior to it* (as Prototype does, for instance). Instead Object.prototype is patched and that's all. There are also a few things which are lazily applied to an object, when such necessity appears. It allows a programmer to be free from extra actions (preprocessing of an object) than he needs.
 
 One of problems of the chosen approach is potential name conflicts with other libraries and frameworks. To avoid them the 'tp' prefix (abbreviation of "true prototyping") is used. The prefix can be changed (if you need that for some reason) with the following code just after TruePrototyping.js is interpreted:
 
 <pre>
 TruePrototyping.usePrefix('_'); // underscore will be used instead of 'tp'
 </pre>
+
+h3. Overview of the stuff TruePrototyping.js library provides
 
 All the stuff provided by the library can be logically divided into two parts:
 
@@ -96,22 +100,30 @@ Serg = Employee.tpDerive({
 
 There is no mystical "prototype", which exists implicitly and "replacement of which can break object relationship at all":http://joost.zeekat.nl/constructors-considered-mildly-confusing.html.
 
-And what? Are there any benefits excepting "backstage cleanness"?
+h4. And what? Are there any benefits excepting "backstage cleanness"?
 
 Well, there is following benefit. Suppose having any object in program, you want to make a very similar object, almost the same, but slightly different. With the proposed approach <b>you can derive new object from the existing one, not worrying about nature of the existing object</b> (existing object may be a Function or not, may have or not proper "prototype" or "constructor" properties):
 
 <pre>
-someExistingObject.method1();            // suppose returns "method1" string
+// This is very honest example as it is a part of TruePrototyping library definition, you can find it inside the library source.
+// I just wanted to have an object, which behaves like instance of standard Array, but has 'last' method.
 
-myObject = someExistingObject.tpDerive({   // type of someExistingObject does not matter
-  method2: function(){
-    return "method2";
-  };
+MyArray = Array.prototype.tpDerive({                // here you can write also [].tpDerive to to be even more abstracted from 'prototype' property, just an extra [] object will be in the MyArray's prototype chain it such case
+  last: function(obj){
+    return this.length > 0 ? this[this.length-1] : null;
+  }
 });
 
-myObject.method1(); // returns "method1"
-myObject.method2(); // returns "method2"
-myObject.hasOwnProperty('method1'); // false, it is not just copying of properties, it is true delegation
+// Since now MyArray can be used as an ancestor ("type") of as many objects ("instances") as you want.
+
+theStack = MyArray.tpDerive();
+alert( theStack.last() );        // null
+theStack.push(1);
+theStack.push(2);
+alert( theStack.toString() );    // 1,2
+alert( theStack.last() );        // 2
+theStack.pop();
+alert( theStack.last() );        // 1
 </pre>
 
 h3. Caution about using tpDerive
@@ -155,6 +167,5 @@ Additionally to the library itself (TruePrototyping.js file) this repository con
 
 h3. TODO
 
-* Internal refactoring: merge propOwner and superDepth into a single superCallStack member, make the member not enumerable.
 * Add ability to provide 'initialize' method inside the second parameter of tpDerive. If initialize is passed, it will be called just after new object creation.
 * Implementation for an environment which is not "ES5-compliant":http://kangax.github.com/es5-compat-table/. For now I am not sure it is actually needed.

@@ -21,11 +21,12 @@
     var _superImmediate         = _prefix + "SuperImmediate";
     var _dependingOnSuperLevel  = _prefix + "DependingOnSuperLevel";
     var _hasProperty            = _prefix + "HasProperty";
+    var _superCallStack         = _prefix + "SuperCallStack";
     
     var _errors = {
-      missingOrInvalidPropertyName:  "Property name should be specified and it should be a string!",
-      missingOrInvalidMethodName:    "Method name should be specified and it should be a string!",
-      missingOrInvalidPredicate: "Predicate should be specified and it should be a function!"
+      missingOrInvalidPropertyName: "Property name should be specified and it should be a string!",
+      missingOrInvalidMethodName:   "Method name should be specified and it should be a string!",
+      missingOrInvalidPredicate:    "Predicate should be specified and it should be a function!"
     };
     
     var firstArgumentShouldBe = function(checkedArgs, requiredTypeName, errorText){
@@ -154,35 +155,76 @@
       }
     });
     
-    var incrementSuperDepth = function(obj){
-      obj.superDepth ? (obj.superDepth += 1) : (obj.superDepth = 1);
+    var CallStack = Array.prototype[_derive]({
+      last: function(obj){
+        return this.length > 0 ? this[this.length-1] : null;
+      }
+    });
+    
+    var initSuperCallStack = function(obj){
+      if(obj.hasOwnProperty(_superCallStack)) { 
+        return; // already has been initialized
+      }
+      
+      Object.defineProperty(obj, _superCallStack, {
+        enumerable: false,
+        configurable: true,
+        value: CallStack[_derive]()
+      });
     };
     
-    var decrementSuperDepth = function(obj){
-      obj.superDepth ? (obj.superDepth -= 1) : (delete obj.superDepth);
-    };
+    // var incrementSuperDepth = function(obj){
+    //   obj.superDepth ? (obj.superDepth += 1) : (obj.superDepth = 1);
+    // };
+    // 
+    // var decrementSuperDepth = function(obj){
+    //   obj.superDepth ? (obj.superDepth -= 1) : (delete obj.superDepth);
+    // };
+    
+    // I could patch Array.prototype with the 'last' method and use it here, but it is not an aim of this library, at least for now ;)
+    // var lastItemOfSuperCallStack = function(obj){
+    //   if(!obj.SuperCallStack){ return null; }
+    //   return obj.SuperCallStack.length > 0 ? obj.SuperCallStack[obj.SuperCallStack.length-1] : null;
+    // };
+    // 
+    // var pushToSuperCallStack = function(obj, itemWhichToPush){
+    //   if(!obj.SuperCallStack){ 
+    //     obj.SuperCallStack = [];
+    // 
+    //   }
+    //   return obj.SuperCallStack.push(itemWhichToPush);
+    // };
+    // 
+    // var popFromSuperCallStack = function(obj, itemWhichToPop){
+    //   if(!obj.SuperCallStack){ return; }
+    //   if(lastItemOfSuperCallStack(obj) === itemWhichToPop){
+    //     return obj.SuperCallStack.pop();
+    //   }
+    // };
     
     var superTemplateImpl = function(ancestorPredicateFactory){
-      return function(){ /* propName, *methodArgs */
+      return function(){ /* methodName, *methodArgs */
         firstArgumentShouldBe(arguments, 'string', _errors.missingOrInvalidMethodName);
 
         var args = Array.prototype.slice.call(arguments);
-        var propName = args.shift();
+        var methodName = args.shift();
       
         var res;
+        
+        // this[_superCallStack] member is intended to prevent cyclic call of the same implementation of methodName 
+        // in case of recursion (if call of this.tpSuper() is encountered inside a base implementation of the method has been called with tpSuper()).
+        initSuperCallStack(this);
+        
+        var methodOwner = (this[_superCallStack].last() || this)[_ancestorByCondition]( ancestorPredicateFactory(methodName, this) );
       
-        // this.propOwner is introduced to prevent cyclic call of the same implementation of propName
-        // in case of recursion (if this.tpSuper() call is encountered inside a base implementation).
-        this.propOwner = (this.propOwner || this)[_ancestorByCondition]( ancestorPredicateFactory(propName, this) );
-      
-        if(this.propOwner){
-          incrementSuperDepth(this);
-          res = this.propOwner[propName].apply(this, args); // here recursion is possible
+        if(methodOwner){
+          this[_superCallStack].push(methodOwner);
+          res = methodOwner[methodName].apply(this, args); // here recursion is possible
+          this[_superCallStack].pop();
         }
       
-        decrementSuperDepth(this);
-        delete this.propOwner; // possible recursion is completed, forget about it
-        return res; // will return undefined, unless this.propOwner[propName] was called, what is intended
+        // decrementSuperDepth(this);
+        return res; // will return undefined, unless this.propOwner[methodName] was called, what is intended
       }
     };
     
@@ -220,7 +262,8 @@
       enumerable: false,
       configurable: true,
       value: function(outOfRecursionValue, inRecursionValue){
-        return this.superDepth ? inRecursionValue : outOfRecursionValue;
+        //return this.superDepth ? inRecursionValue : outOfRecursionValue;
+        return (this[_superCallStack] && this[_superCallStack].length) ? inRecursionValue : outOfRecursionValue;
       }
     });
 
