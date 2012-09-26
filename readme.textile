@@ -108,15 +108,15 @@ Well, there is following benefit. Suppose having any object in program, you want
 // This is very honest example as it is a part of TruePrototyping library definition, you can find it inside the library source.
 // I just wanted to have an object, which behaves like instance of standard Array, but has 'last' method.
 
-MyArray = Array.prototype.tpDerive({                // here you can write also [].tpDerive to to be even more abstracted from 'prototype' property, just an extra [] object will be in the MyArray's prototype chain it such case
+EnhancedArray = Array.prototype.tpDerive({                // here you can write also [].tpDerive to be even more abstracted from 'prototype' property, just an extra [] object will be in the EnhancedArray's prototype chain in such case
   last: function(obj){
     return this.length > 0 ? this[this.length-1] : null;
   }
 });
 
-// Since now MyArray can be used as an ancestor ("type") of as many objects ("instances") as you want.
+// Since now EnhancedArray can be used as an ancestor ("type") of as many objects ("instances") as you want.
 
-theStack = MyArray.tpDerive();
+theStack = EnhancedArray.tpDerive();
 alert( theStack.last() );        // null
 theStack.push(1);
 theStack.push(2);
