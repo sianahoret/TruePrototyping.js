@@ -10,35 +10,35 @@ Stop thinking with "classes" and "instances" - think with true prototype chain, 
 
 h3. Traditional javascript inheritance model is weird
 
-Inspite of javascript's inheritance model is propotypal by definition, <b>constructor pattern, which is integrated into the language, actually mimics classical OOP</b>. So instead of "True Prototypal Inheritance":http://en.wikipedia.org/wiki/Prototype-based_programming we have a weird hybrid of two inheritance models, and so many programmers are not comfortable with inheritance in javascript. _Using functions as object constructors with "new" operator, excurrent implementation of "prototype" and "constructor" properties, "typeof" and "instanceof" operators makes a program more complex and confusing than it can be.__
+Inspite of javascript's inheritance model is propotypal by definition, <b>constructor pattern, which is integrated into the language, actually mimics classical OOP</b>. So instead of "True Prototypal Inheritance":http://en.wikipedia.org/wiki/Prototype-based_programming we have a weird hybrid of two inheritance models, and so many programmers are not comfortable with inheritance in javascript. _Using functions as object constructors with "new" operator, excurrent implementation of "prototype" and "constructor" properties, "typeof" and "instanceof" operators makes a program more complex and confusing than it can be._
 
 To better realize what I mean you can visit these links:
 * "'Prototypal Inheritance in JavaScript' by Douglas Crockford":http://javascript.crockford.com/prototypal.html. A quote from there: "JavaScript's constructor pattern obscured JavaScript's true prototypal nature".
 * "Confusion with 'constructor' property":http://joost.zeekat.nl/constructors-considered-mildly-confusing.html
 
-<b>There is a lot of javascript libraries and frameworks which provide class-like APIs and mimics classical OOP even more</b> - they only wrap constructor-driven inheritance model so that programmer may not think about prototype property, but it is still not the mentioned True Prototypal Inheritance. At the same time, <b>I do not know a library which follows the true prototypal inheritance style</b>, and I am upset by this. I guess the "true style" deserves to be more used than it is at nowadays.
+<b>There is a lot of javascript libraries and frameworks which provide class-like APIs and mimics classical OOP even more</b> - they only wrap constructor-driven inheritance model so that programmer may not think about 'prototype' property, but it is still not the mentioned True Prototypal Inheritance. At the same time, <b>I do not know a library which follows the true prototypal inheritance style</b>, and I am upset by this. I guess the "true style" deserves to be more used than it is at nowadays.
 
 h3. Ways of using true prototypal inheritance style in javascript
 
-True prototypal inheritance style in javascript is possible for long time with using non-standard "__proto__":https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Object/proto property. Since "ECMAScript 5th Edition":http://ecma-international.org/ecma-262/5.1/#sec-15.2.3.5 (JavaScript 1.8.5) there is a standard way - Object.create and a few related methods.
+True prototypal inheritance style in javascript is possible for long time with using non-standard "___proto___":https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Object/proto property. Since "ECMAScript 5th Edition":http://ecma-international.org/ecma-262/5.1/#sec-15.2.3.5 (JavaScript 1.8.5) there is a standard way - Object.create and a few related methods.
 
 A couple of links:
 * "Demonstration of the true style by Tim Caswell, a Node.js developer":http://howtonode.org/prototypical-inheritance
 * "My article":http://innerbytes.net/proto/javascript/clear_prototipal_inheritance.htm (in Russian)
 
-So the idea is not new. What do I try to achieve with the TruePrototyping library? 
+Thus the idea is not new. So what do I try to achieve with the TruePrototyping library? Read further ;)
 
 
-h3. Common "Philosophy" of TruePrototyping.js library
+h3. Common "philosophy" of TruePrototyping.js library
 
 *TruePrototyping library provides some behavior to all objects by adding a few properties and methods.*
 
 Approach of how to apply the new behavior to an object is following: 
 
-* *The library does not create a wrapper over a target object* (as jQuery does, for instance). All the added properties and methods can be called on the target object immediately. It allows a programmer to be free from keeping in mind more abstractions than he needs, a programmer never should to skip from wrapper to underlying object and vice versa, because a wrapper does not exist :).
-* *The library does not patch every concrete object by demand to apply a new behavior to it* (as Prototype does, for instance). Instead Object.prototype is patched and that's all. There are also a few things which are lazily applied to an object, when such necessity appears. It allows a programmer to be free from extra actions (preprocessing of an object) than he needs.
+* *The library does not create a wrapper over a target object* (as jQuery does, for instance). All the added properties and methods can be called on a target object immediately. It allows a programmer to be free from keeping in mind more abstractions than he needs, a programmer never should skip from wrapper to underlying object and vice versa, because a wrapper does not exist :).
+* *The library does not patch every concrete object by demand to apply a new behavior to it* (as Prototype does, for instance). Instead Object.prototype is patched and that's all. Well, there is only one thing which is lazily applied to an object, when such necessity appears, but it happens implicitly, you do not have to do anything for that. It allows a programmer to be free from extra actions (preprocessing of an object) than he needs.
 
-One of problems of the chosen approach is potential name conflicts with other libraries and frameworks. To avoid them the 'tp' prefix (abbreviation of "true prototyping") is used. The prefix can be changed (if you need that for some reason) with the following code just after TruePrototyping.js is interpreted:
+One of problems of the chosen approach is potential name conflicts with other libraries and frameworks. To avoid them the 'tp' prefix (the abbreviation of "true prototyping") is used. The prefix can be changed (if you need that for some reason) with the following code just after TruePrototyping.js is interpreted:
 
 <pre>
 TruePrototyping.usePrefix('_'); // underscore will be used instead of 'tp'
@@ -46,12 +46,12 @@ TruePrototyping.usePrefix('_'); // underscore will be used instead of 'tp'
 
 h3. Overview of the stuff TruePrototyping.js library provides
 
-All the stuff provided by the library can be logically divided into two parts:
+All the stuff supplied by the library can be logically divided into two parts:
 
 h4. 1. The stuff providing a compact syntax for +construction of object hierarchy according to the True Prototypal inheritance model+:
 
 |_. Stuff                                           |_. Description |
-|*tpDerive* method                                  | Creates and returns a new object, immediately derived   from the object which the method is called on. |
+|*tpDerive* method                                  | Creates and returns a new object, +immediately derived+ from the object which the method is called on. The base object can have any type, it shouldn't be a function. |
 
 h4. 2. The stuff providing a convenient and uniform way for +introspection and lookup of true prototype chain+, even if object hierarchy was created with "traditional" style:
 
@@ -64,9 +64,10 @@ h4. 2. The stuff providing a convenient and uniform way for +introspection and l
 | *tpIsDescendantOf*(ancestorContender) method      | Returns true, if the object which the method is called on is an descendant (through any number of levels) of the ancestorContender object, otherwise false. |
 | *tpSuper*(methodName, methodArgs) method          | Calls on the object which the method is called on the nearest base implementation of the methodName method which differs from the implementation this object has. The rest of passed parameters (methodArgs) are transmitted to the call. |
 | *tpSuperImmediate*(methodName, methodArgs) method | Similar to tpSuper, but unlike it calls the immediate ancestor's implementation of methodName, even if the immediate ancestor's implementation does not differ from the implementation this object has. |
-| *tpDependingOnSuperLevel*(outOfRecursionValue, inRecursionValue) method | Returns outOfRecursionValue, being called quite out or at the first level of super recursion. Returns inRecursionValue, being called inside super recursion (on any level more than the first one). The method is useful inside methods, which are called with tpSuper or tpSuperImmediate. |
+| *tpDependingOnSuperLevel*(outOfRecursionValue, inRecursionValue) method | Returns outOfRecursionValue, being called quite out or at the first level of super recursion. Returns inRecursionValue, being called inside super recursion (on any level more than the first one). The method is useful inside methods, which are called with tpSuper or tpSuperImmediate to prevent unnecessary duplications. |
 | *tpHasProperty*(propName) method | Returns true if the object which the method is called on has the specified property (either owns or inherits), otherwise false. In other words, this method is similar to standard 'hasOwnProperty', but without 'own' restriction. The method returns true even if the specified property is defined in ancestor and there it has the value of type "undefined" :) |
 
+You can see examples of using of almost all the properties and methods in mix_with_frameworks/all.html.
 
 h3. What you need to start using TruePrototyping library
 
@@ -105,7 +106,7 @@ h4. And what? Are there any benefits excepting "backstage cleanness"?
 Well, there is following benefit. Suppose having any object in program, you want to make a very similar object, almost the same, but slightly different. With the proposed approach <b>you can derive new object from the existing one, not worrying about nature of the existing object</b> (existing object may be a Function or not, may have or not proper "prototype" or "constructor" properties):
 
 <pre>
-// This is very honest example as it is a part of TruePrototyping library definition, you can find it inside the library source.
+// This is very honest example as it is a part of TruePrototyping library implementation, you can find it inside the library source code.
 // I just wanted to have an object, which behaves like instance of standard Array, but has 'last' method.
 
 EnhancedArray = Array.prototype.tpDerive({                // here you can write also [].tpDerive to be even more abstracted from 'prototype' property, just an extra [] object will be in the EnhancedArray's prototype chain in such case
@@ -128,10 +129,10 @@ alert( theStack.last() );        // 1
 
 h3. Caution about using tpDerive
 
-Regardless to which other libraries and frameworks you use, together with them you can absolutely safely use all properties and methods provided by TruePrototyping library excepting tpDerive method.
+*Together with any libraries and frameworks you can absolutely safely use all properties and methods provided by TruePrototyping library excepting tpDerive method*.
 
-It does not mean, that in such case you cannot use tpDerive at all.
-It only means that it can be confusing, if you try to mix true prototypal inheritance model (with tpDerive method) and the constructor-driven inheritance model in the same hierarchy. You should be very careful with such mix.
+It does not mean that in case of using some other library you cannot use tpDerive at all.
+It only means that it may be confusing, if you try to mix true prototypal inheritance model (with tpDerive method) and the constructor-driven inheritance model +in the same hierarchy+. You should be very careful with such mix.
 
 For example, usually you use Backbone.Model in this way:
 
@@ -147,25 +148,25 @@ MyModel = Backbone.Model.extend({});
 myInstance = MyModel.tpDerive();        // myInstance.__proto__ points to MyModel itself instead of MyModel.prototype
 </pre>
 
-myInstance object won't act as expected for an instance of Backbone.Model, because myInstance is not traditional "instanceof" MyModel (and is not "instanceof" Backbone.Model), what the Backbone framework relies on.
+myInstance object won't act as expected for an instance of Backbone.Model, because myInstance is not "instanceof" MyModel (and is not "instanceof" Backbone.Model), what the Backbone framework relies on.
 
 
 h3. Use for lookup of object hierarchies have been build with different frameworks
 
-Frameworks which provides APIs for constructing object hierarchy (most of them simulate classical inheritance) in different ways provide the feature of <i>referencing to an ancestor object</i> (up through the hierarchy), well known as "super"-reference or "super"-call for a method. Sometimes the feature is provided explicitly; sometimes the feature is there, but is not documented (and looks like inner __super__ method); sometimes the feature is just absent.
+Frameworks which provides APIs for constructing object hierarchy (most of them simulate classical inheritance) in different ways provide the feature of <i>referencing to an ancestor object</i> (up through the hierarchy), well known as "super"-reference or "super"-call of a method. Sometimes the feature is provided explicitly; sometimes the feature is there, but is not documented (and looks like inner __super__ method); sometimes the feature is just absent.
 
-TruePrototyping library provides a few properties and methods, which allow to walk through true prototype chain (see the table above). Moreover, it allows to do that in the same way for object hierarchies created by different frameworks. In mix_with_frameworks directory you can see examples of lookup into object hierarchies created with Prototype, Mootools, Base2, JS.Class, JavascriptMVC, Backbone, CoffeeScript and TruePrototyping itself.
+*TruePrototyping library provides a few properties and methods, which allow to walk through true prototype chain* (see the table above). Moreover, it allows to do that *in the same way for object hierarchies created by different frameworks*. In mix_with_frameworks directory you can see examples of lookup of object hierarchies created with Prototype, Mootools, Base2, JS.Class, JavascriptMVC, Backbone, CoffeeScript and TruePrototyping itself.
 
 h3. What you can look and try just now
 
 Additionally to the library itself (TruePrototyping.js file) this repository contains some program code which you can review and run:
 
-1. There are examples of using TruePrototyping library for lookup of object hierarchies created with Propotype, Mootools, JavascriptMVC, Backbone and TruePrototyping itself. If you open <b>mix_with_frameworks/all.html</b> file in any browser, you can review the code and try to run it.
+1. There are examples of using TruePrototyping library for lookup of object hierarchies created with a few frameworks and with TruePrototyping itself. If you open <b>mix_with_frameworks/all.html</b> file in any browser, you can review runnable examples of code.
 
 2. The library is tested with jasmine test framework. You can open <b>spec/all.html</b> in any browser to see a result of all tests execution and you can review a source code of the tests in <b>spec/*.js</b> files.
 
 
 h3. TODO
 
-* Add ability to provide 'initialize' method inside the second parameter of tpDerive. If initialize is passed, it will be called just after new object creation.
-* Implementation for an environment which is not "ES5-compliant":http://kangax.github.com/es5-compat-table/. For now I am not sure it is actually needed.
+* Add the ability to provide 'initialize' method inside the second parameter of tpDerive. If initialize is passed, it will be called just after new object creation (as in numerous class-like libraries). It is not a problem at all to add the feature - just I am not sure the feature is needed, seems I am comfortable without it :).
+* Implementation for an environment which is not "ES5-compliant":http://kangax.github.com/es5-compat-table/. Again, I am not sure it is actually needed.
