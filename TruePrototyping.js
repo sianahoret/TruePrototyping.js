@@ -58,7 +58,7 @@
       value: function(properties){
         var newObject = Object.create(this);
         if(properties && typeof(properties) === "object"){
-          for(p in properties){
+          for(var p in properties){
             if(properties.hasOwnProperty(p)){
               newObject[p] = properties[p];
             }
