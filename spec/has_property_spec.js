@@ -20,7 +20,7 @@ describeProperty("tpHasProperty", function() {
     });
   });
   
-  shouldCheckFirstArgument("property name", String, "Property name should be specified and it should be a string!");
+  shouldCheckFirstArgument("property name", "Property name should be specified!");
   
   describe("Should return true, if", function(){  
     describe("the respondent object has own specified property", function(){

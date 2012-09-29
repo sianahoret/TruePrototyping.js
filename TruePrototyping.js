@@ -24,15 +24,19 @@
     var _superCallStack         = _prefix + "SuperCallStack";
     
     var _errors = {
-      missingOrInvalidPropertyName: "Property name should be specified and it should be a string!",
-      missingOrInvalidMethodName:   "Method name should be specified and it should be a string!",
-      missingOrInvalidPredicate:    "Predicate should be specified and it should be a function!"
+      missingPropertyName: "Property name should be specified!",
+      missingMethodName:   "Method name should be specified!",
+      missingOrInvalidPredicate: "Predicate should be specified and it should be a function!"
     };
     
-    var firstArgumentShouldBe = function(checkedArgs, requiredTypeName, errorText){
+    var firstArgumentShouldBePresent = function(checkedArgs, errorText){
       if(!checkedArgs.length){
         throw errorText;
       }
+    };
+    
+    var firstArgumentShouldBe = function(checkedArgs, requiredTypeName, errorText){
+      firstArgumentShouldBePresent(checkedArgs, errorText);
       
       var checkType = function(obj){
         switch(requiredTypeName){
@@ -148,7 +152,7 @@
       enumerable: false,
       configurable: true,
       value: function(propName){
-        firstArgumentShouldBe(arguments, 'string', _errors.missingOrInvalidPropertyName);
+        firstArgumentShouldBePresent(arguments, _errors.missingPropertyName);
         return propName in this;
       }
     });
@@ -174,7 +178,7 @@
     
     var superTemplateImpl = function(ancestorPredicateFactory){
       return function(){ /* methodName, *methodArgs */
-        firstArgumentShouldBe(arguments, 'string', _errors.missingOrInvalidMethodName);
+        firstArgumentShouldBePresent(arguments, _errors.missingMethodName);
 
         var args = Array.prototype.slice.call(arguments);
         var methodName = args.shift();

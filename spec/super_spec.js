@@ -28,7 +28,7 @@ describeProperty("tpSuper", function() {
     });
   });
 
-  shouldCheckFirstArgument("method name", String, "Method name should be specified and it should be a string!");
+  shouldCheckFirstArgument("method name", "Method name should be specified!");
 
   describe("Should call on 'this' object the nearest (among ancestors) different implementation of a method", function(){
     it("with the same name", function(){
@@ -90,7 +90,7 @@ describeProperty("tpSuperImmediate", function() {
     });
   });
 
-  shouldCheckFirstArgument("method name", String, "Method name should be specified and it should be a string!");
+  shouldCheckFirstArgument("method name", "Method name should be specified!");
   
   describe("Should call on 'this' object the immediate ancestor's implementation of the specified method", function(){
     it("with the same name", function(){

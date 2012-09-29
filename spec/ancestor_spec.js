@@ -63,7 +63,7 @@ describeProperty("tpAncestors", function() {
 
 describeProperty("tpAncestorByCondition", function() {
   shouldBeDefinedOnAnyObject();
-  shouldCheckFirstArgument("predicate", Function, "Predicate should be specified and it should be a function!");
+  shouldCheckFirstArgument("predicate", "Predicate should be specified and it should be a function!", Function);
   
   beforeEach(function(){
     Person = { health: 'middle' };
@@ -101,7 +101,7 @@ describeProperty("tpAncestorByCondition", function() {
 
 describeProperty("tpAncestorsByCondition", function() {
   shouldBeDefinedOnAnyObject();
-  shouldCheckFirstArgument("predicate", Function, "Predicate should be specified and it should be a function!");
+  shouldCheckFirstArgument("predicate", "Predicate should be specified and it should be a function!", Function);
   
   beforeEach(function(){
     Person = { health: 'middle' };

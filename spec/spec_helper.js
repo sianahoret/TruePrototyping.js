@@ -37,21 +37,29 @@ shouldBeDefinedOnAnyObject = function(){
   });
 };
 
-shouldCheckFirstArgument = function(firstArgumentComment, requiredArgumentType, exceptionText){
+shouldCheckFirstArgument = function(firstArgumentComment, exceptionText, requiredArgumentType){
   describe("Should throw an exception,", function(){
     it("if the " + firstArgumentComment + " is not specified", function(){
       expect(function(){ Person[_property_]() }).toThrow(exceptionText);
     });
     
-    it("if the " + firstArgumentComment + " is not a " + requiredArgumentType.name, function(){
-      expect(function(){ Person[_property_](123) }).toThrow(exceptionText);
-    });
+    if(requiredArgumentType){
+      it("if the " + firstArgumentComment + " is not a " + requiredArgumentType.name, function(){
+        expect(function(){ Person[_property_]({}) }).toThrow(exceptionText);
+      });
+    }
   });
   
   describe("Should not throw an exception,", function(){
-    it("if the " + firstArgumentComment + " is a " + requiredArgumentType.name, function(){
-      expect(function(){ Person[_property_](new requiredArgumentType()) }).not.toThrow();
-    });
+    if(requiredArgumentType){
+      it("if the " + firstArgumentComment + " is a " + requiredArgumentType.name, function(){
+        expect(function(){ Person[_property_](new requiredArgumentType()) }).not.toThrow();
+      });
+    } else {
+      it("if the " + firstArgumentComment + " is passed", function(){
+        expect(function(){ Person[_property_]({}) }).not.toThrow();
+      });
+    }
   });
 };
 
