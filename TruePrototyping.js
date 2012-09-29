@@ -149,9 +149,7 @@
       configurable: true,
       value: function(propName){
         firstArgumentShouldBe(arguments, 'string', _errors.missingOrInvalidPropertyName);
-        
-        var test = function(obj){ return obj.hasOwnProperty(propName); };
-        return (test(this) || this[_ancestors].some(test)); // Also _ancestorByCondition could be used here instead of 'some'
+        return propName in this;
       }
     });
     
