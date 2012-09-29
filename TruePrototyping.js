@@ -159,7 +159,7 @@
     
     // I could add 'last' method just into Array.prototype, but it is not the aim of this library, at least for now ;)
     var EnhancedArray = Array.prototype[_derive]({
-      last: function(obj){
+      last: function(){
         return this.length > 0 ? this[this.length-1] : null;
       }
     });

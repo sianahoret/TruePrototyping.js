@@ -110,7 +110,7 @@ Well, there is following benefit. Suppose having any object in program, you want
 // I just wanted to have an object, which behaves like instance of standard Array, but has 'last' method.
 
 EnhancedArray = Array.prototype.tpDerive({                // here you can write also [].tpDerive to be even more abstracted from 'prototype' property, just an extra [] object will be in the EnhancedArray's prototype chain in such case
-  last: function(obj){
+  last: function(){
     return this.length > 0 ? this[this.length-1] : null;
   }
 });
@@ -125,6 +125,30 @@ alert( theStack.toString() );    // 1,2
 alert( theStack.last() );        // 2
 theStack.pop();
 alert( theStack.last() );        // 1
+</pre>
+
+If you like, this way you can create an object presenter (proxy):
+
+<pre>
+var myArray = [1,2,3,4,5];
+
+var myArrayPresenter = myArray.tpDerive({
+  last: function(){
+    return this.length > 0 ? this[this.length-1] : null;
+  },
+  sum: function(){
+    return this.reduce(function(res, item){ return res + item; });
+  }
+}); 
+
+alert( myArrayPresenter.last() );  // 5
+alert( myArrayPresenter.sum() );   // 15
+
+// myArrayPresenter can be used without a risk to mutilate myArray (any writing into myArrayPresenter will affect myArrayPresenter, but not myArray):
+
+myArrayPresenter[2] = 1;           // accidentally or intentionally
+alert( myArrayPresenter.sum() );   // 13
+alert(myArray);                    // 1,2,3,4,5
 </pre>
 
 h3. Caution about using tpDerive
