@@ -24,7 +24,7 @@ True prototypal inheritance style in javascript is possible for long time with u
 
 A couple of links:
 * "Demonstration of the true style by Tim Caswell, a Node.js developer":http://howtonode.org/prototypical-inheritance
-* "My article":http://innerbytes.net/proto/javascript/clear_prototipal_inheritance.htm (in Russian)
+* "My article":http://sianahoret.github.io/ (in Russian)
 
 Thus the idea is not new. So what do I try to achieve with the TruePrototyping library? Read further ;)
 
